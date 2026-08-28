@@ -1,0 +1,7 @@
+.env
+settings.yaml
+projects.yaml
+__pycache__/
+*.pyc
+.venv/
+*.wav
