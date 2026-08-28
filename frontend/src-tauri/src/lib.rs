@@ -47,6 +47,7 @@ pub mod onboarding;
 pub mod openai;
 pub mod anthropic;
 pub mod groq;
+pub mod meeting_detection;
 pub mod openrouter;
 pub mod parakeet_engine;
 pub mod state;
@@ -208,6 +209,41 @@ async fn stop_recording<R: Runtime>(app: AppHandle<R>, args: RecordingArgs) -> R
 #[tauri::command]
 async fn is_recording() -> bool {
     audio::recording_commands::is_recording().await
+}
+
+/// Controls recording from the lightweight always-on-top window.
+///
+/// Starting is routed through the hidden main webview so the existing frontend
+/// lifecycle clears transcript state and initializes its recovery database.
+/// Pause, resume, and stop use the shared Rust recording lifecycle directly.
+#[tauri::command]
+async fn overlay_recording_action<R: Runtime>(
+    app: AppHandle<R>,
+    action: String,
+) -> Result<(), String> {
+    match action.as_str() {
+        "start" => tray::request_recording_start(&app, false),
+        "pause" => audio::recording_commands::pause_recording(app).await,
+        "resume" => audio::recording_commands::resume_recording(app).await,
+        "stop" => {
+            tray::set_tray_state(&app, tray::RecordingState::Stopping);
+            tray::stop_recording_and_emit(app).await
+        }
+        "open" => {
+            tray::focus_main_window(&app);
+            Ok(())
+        }
+        "hide" => {
+            meeting_detection::dismiss_for_current_meeting();
+            let window = app
+                .get_webview_window("meeting-overlay")
+                .ok_or_else(|| "Meeting overlay is unavailable".to_string())?;
+            window
+                .hide()
+                .map_err(|error| format!("Failed to hide meeting overlay: {}", error))
+        }
+        _ => Err(format!("Unsupported overlay action: {}", action)),
+    }
 }
 
 #[tauri::command]
@@ -409,7 +445,6 @@ pub fn run() {
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_dialog::init())
-        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .manage(whisper_engine::parallel_commands::ParallelProcessorState::new())
         .manage(Arc::new(RwLock::new(
@@ -424,6 +459,8 @@ pub fn run() {
             if let Err(e) = tray::create_tray(_app.handle()) {
                 log::error!("Failed to create system tray: {}", e);
             }
+            tray::position_overlay_window(_app.handle());
+            meeting_detection::start(_app.handle().clone());
 
             // Initialize notification system with proper defaults
             log::info!("Initializing notification system...");
@@ -513,12 +550,12 @@ pub fn run() {
         })
         .on_window_event(|window, event| {
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                if window.label() == "main" {
+                if window.label() == "main" || window.label() == "meeting-overlay" {
                     api.prevent_close();
                     if let Err(e) = window.hide() {
-                        log::error!("Failed to hide main window on close request: {}", e);
+                        log::error!("Failed to hide window on close request: {}", e);
                     } else {
-                        log::info!("Main window hidden to tray on close request");
+                        log::info!("Window hidden to tray on close request: {}", window.label());
                     }
                 }
             }
@@ -527,6 +564,7 @@ pub fn run() {
             start_recording,
             stop_recording,
             is_recording,
+            overlay_recording_action,
             get_transcription_status,
             read_audio_file,
             save_transcript,

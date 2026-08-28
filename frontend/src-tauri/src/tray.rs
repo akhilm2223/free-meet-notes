@@ -2,7 +2,7 @@ use tauri::{
     Emitter,
     menu::{MenuBuilder, MenuItemBuilder, PredefinedMenuItem},
     tray::TrayIconBuilder,
-    AppHandle, Manager, Runtime,
+    AppHandle, Manager, PhysicalPosition, Runtime,
 };
 
 #[derive(Debug, Clone)]
@@ -23,7 +23,7 @@ pub fn create_tray<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<()> {
 
     TrayIconBuilder::with_id("main-tray")
         .menu(&menu)
-        .tooltip("Meetily")
+        .tooltip("Meetnotes")
         .icon(app.default_window_icon().unwrap().clone())
         .on_menu_event(|app, event| handle_menu_event(app, event.id.as_ref()))
         .build(app)?;
@@ -40,6 +40,7 @@ fn handle_menu_event<R: Runtime>(app: &AppHandle<R>, item_id: &str) {
         "pause_recording" => pause_recording_handler(app),
         "resume_recording" => resume_recording_handler(app),
         "stop_recording" => stop_recording_handler(app),
+        "toggle_overlay" => toggle_overlay_window(app),
         "open_window" => focus_main_window(app),
         "settings" => {
             focus_main_window(app);
@@ -47,7 +48,6 @@ fn handle_menu_event<R: Runtime>(app: &AppHandle<R>, item_id: &str) {
                 let _ = window.eval("window.location.assign('/settings')");
             }
         }
-        "check_updates" => check_updates_handler(app),
         "quit" => app.exit(0),
         _ => {}
     }
@@ -62,38 +62,13 @@ fn toggle_recording_handler<R: Runtime>(app: &AppHandle<R>) {
 
             log::info!("Tray toggle: Stopping recording...");
 
-            // Generate save path (same as RecordingControls.tsx)
-            let data_dir = match app_clone.path().app_data_dir() {
-                Ok(dir) => dir,
-                Err(e) => {
-                    log::error!("Failed to get app data dir: {}", e);
-                    update_tray_menu_async(&app_clone).await;
-                    return;
-                }
-            };
-
-            let timestamp = chrono::Local::now().format("%Y-%m-%dT%H-%M-%S").to_string();
-            let save_path = data_dir.join(format!("recording-{}.wav", timestamp));
-
-            // Call Rust stop_recording command (like pause/resume pattern)
-            let stop_result = crate::audio::recording_commands::stop_recording(
-                app_clone.clone(),
-                crate::audio::recording_commands::RecordingArgs {
-                    save_path: save_path.to_string_lossy().to_string(),
-                },
-            )
-            .await;
+            let stop_result = stop_recording_and_emit(app_clone.clone()).await;
 
             // Handle result
             match stop_result {
                 Ok(_) => {
                     log::info!("Tray toggle: Recording stopped successfully");
 
-                    // Trigger frontend post-processing via event (works from any page)
-                    // (SQLite save, navigation, analytics)
-                    if let Err(e) = app_clone.emit("recording-stop-complete", true) {
-                        log::error!("Tray toggle: Failed to emit recording-stop-complete event: {}", e);
-                    }
                 }
                 Err(e) => {
                     log::error!("Tray toggle: Failed to stop recording: {}", e);
@@ -105,10 +80,10 @@ fn toggle_recording_handler<R: Runtime>(app: &AppHandle<R>) {
             // Immediately show starting state
             set_tray_state(&app_clone, RecordingState::Starting);
 
-            log::info!("Emitting start recording event from tray");
-            if let Some(window) = app_clone.get_webview_window("main") {
-                let _ = window.eval("sessionStorage.setItem('autoStartRecording', 'true')"); // Set the flag to start recording automatically
-                let _ = window.eval("window.location.assign('/')");
+            log::info!("Requesting recording start from tray");
+            if let Err(e) = request_recording_start(&app_clone, false) {
+                log::error!("Tray toggle: Failed to request recording start: {}", e);
+                update_tray_menu_async(&app_clone).await;
             }
         }
     });
@@ -158,38 +133,13 @@ fn stop_recording_handler<R: Runtime>(app: &AppHandle<R>) {
     tauri::async_runtime::spawn(async move {
         log::info!("Tray: Stopping recording...");
 
-        // Generate save path (same as RecordingControls.tsx)
-        let data_dir = match app_clone.path().app_data_dir() {
-            Ok(dir) => dir,
-            Err(e) => {
-                log::error!("Failed to get app data dir: {}", e);
-                update_tray_menu_async(&app_clone).await;
-                return;
-            }
-        };
-
-        let timestamp = chrono::Local::now().format("%Y-%m-%dT%H-%M-%S").to_string();
-        let save_path = data_dir.join(format!("recording-{}.wav", timestamp));
-
-        // Call Rust stop_recording command (like pause/resume pattern)
-        let stop_result = crate::audio::recording_commands::stop_recording(
-            app_clone.clone(),
-            crate::audio::recording_commands::RecordingArgs {
-                save_path: save_path.to_string_lossy().to_string(),
-            },
-        )
-        .await;
+        let stop_result = stop_recording_and_emit(app_clone.clone()).await;
 
         // Handle result
         match stop_result {
             Ok(_) => {
                 log::info!("Tray: Recording stopped successfully");
 
-                // Trigger frontend post-processing via event (works from any page)
-                // (SQLite save, navigation, analytics)
-                if let Err(e) = app_clone.emit("recording-stop-complete", true) {
-                    log::error!("Tray: Failed to emit recording-stop-complete event: {}", e);
-                }
             }
             Err(e) => {
                 log::error!("Tray: Failed to stop recording: {}", e);
@@ -198,15 +148,6 @@ fn stop_recording_handler<R: Runtime>(app: &AppHandle<R>) {
             }
         }
     });
-}
-
-fn check_updates_handler<R: Runtime>(app: &AppHandle<R>) {
-    focus_main_window(app);
-    if let Some(window) = app.get_webview_window("main") {
-        let _ = window.eval(
-            "window.dispatchEvent(new CustomEvent('check-updates-from-tray'))"
-        );
-    }
 }
 
 pub fn update_tray_menu<R: Runtime>(app: &AppHandle<R>) {
@@ -383,12 +324,90 @@ fn build_menu<R: Runtime>(
 
     builder
         .item(&PredefinedMenuItem::separator(app)?)
+        .item(&MenuItemBuilder::with_id("toggle_overlay", "Meeting Controls").build(app)?)
         .item(&MenuItemBuilder::with_id("open_window", "Open Main Window").build(app)?)
         .item(&MenuItemBuilder::with_id("settings", "Settings").build(app)?)
-        .item(&MenuItemBuilder::with_id("check_updates", "Check for Updates").build(app)?)
         .item(&PredefinedMenuItem::separator(app)?)
         .item(&MenuItemBuilder::with_id("quit", "Quit").build(app)?)
         .build()
+}
+
+pub(crate) fn request_recording_start<R: Runtime>(
+    app: &AppHandle<R>,
+    focus_main: bool,
+) -> Result<(), String> {
+    if focus_main {
+        focus_main_window(app);
+    }
+
+    let window = app
+        .get_webview_window("main")
+        .ok_or_else(|| "Main window is unavailable".to_string())?;
+
+    window
+        .eval(
+            "sessionStorage.setItem('autoStartRecording', 'true'); window.location.assign('/');",
+        )
+        .map_err(|error| format!("Failed to request recording start: {}", error))
+}
+
+pub(crate) async fn stop_recording_and_emit<R: Runtime>(
+    app: AppHandle<R>,
+) -> Result<(), String> {
+    let data_dir = app
+        .path()
+        .app_data_dir()
+        .map_err(|error| format!("Failed to get app data directory: {}", error))?;
+    let timestamp = chrono::Local::now().format("%Y-%m-%dT%H-%M-%S");
+    let save_path = data_dir.join(format!("recording-{}.wav", timestamp));
+
+    crate::audio::recording_commands::stop_recording(
+        app.clone(),
+        crate::audio::recording_commands::RecordingArgs {
+            save_path: save_path.to_string_lossy().to_string(),
+        },
+    )
+    .await?;
+
+    app.emit("recording-stop-complete", true)
+        .map_err(|error| format!("Failed to start recording post-processing: {}", error))
+}
+
+pub(crate) fn position_overlay_window<R: Runtime>(app: &AppHandle<R>) {
+    let Some(window) = app.get_webview_window("meeting-overlay") else {
+        return;
+    };
+
+    let Ok(Some(monitor)) = window.current_monitor() else {
+        return;
+    };
+    let Ok(window_size) = window.outer_size() else {
+        return;
+    };
+
+    let monitor_size = monitor.size();
+    let monitor_position = monitor.position();
+    let horizontal_offset = monitor_size.width.saturating_sub(window_size.width) / 2;
+    let x = monitor_position.x + horizontal_offset as i32;
+    let y = monitor_position.y + 20;
+    let _ = window.set_position(PhysicalPosition::new(x, y));
+}
+
+pub(crate) fn toggle_overlay_window<R: Runtime>(app: &AppHandle<R>) {
+    let Some(window) = app.get_webview_window("meeting-overlay") else {
+        log::warn!("Could not find meeting overlay window");
+        return;
+    };
+
+    if window.is_visible().unwrap_or(false) {
+        let _ = window.hide();
+        return;
+    }
+
+    position_overlay_window(app);
+    if let Err(error) = window.show() {
+        log::error!("Failed to show meeting overlay: {}", error);
+    }
 }
 
 pub(crate) fn focus_main_window<R: Runtime>(app: &AppHandle<R>) {
