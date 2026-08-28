@@ -1,7 +1,78 @@
+# Local secrets and machine-specific configuration
 .env
+.env.*
+!.env.example
+!**/.env.example
 settings.yaml
 projects.yaml
+*.pem
+
+# Python
 __pycache__/
 *.pyc
 .venv/
+
+# Experiments and local model files
+/experiments/
+experiments/
+**/models/
+
+# Node / package managers
+/node_modules/
+node_modules/
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Tests and build output
+/coverage/
+/dist/
+/.next/
+/out/
+/build/
+target/
+*.tsbuildinfo
+next-env.d.ts
+
+# Tauri sidecars are generated or downloaded locally
+frontend/src-tauri/binaries/
+
+# Private meeting data
 *.wav
+*.mp4
+meeting_minutes.db
+meetnotes.db
+/meetings/
+/recordings/
+/transcripts/
+
+# Vercel
+.vercel/
+
+# Logs
+logs/
+*.log
+dev-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+.cursor/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Large documentation media
+docs/demo.mov
+docs/demo.gif
