@@ -1,6 +1,6 @@
 # Upstream provenance
 
-Meetnotes is currently built on [Meetily](https://github.com/Zackriya-Solutions/meetily),
+Free Meet Notes is currently built on [Meetily](https://github.com/Zackriya-Solutions/meetily),
 which is distributed under the MIT License. The original license and copyright
 notice remain in [`LICENSE.md`](LICENSE.md).
 
@@ -9,8 +9,8 @@ notice remain in [`LICENSE.md`](LICENSE.md).
 - Local tracking tag: `upstream-meetily-v0.4.0`
 - Foundation merge: `b537434`
 
-The fork preserves upstream Git history. Meetnotes-specific changes include the
+The fork preserves upstream Git history. Free Meet Notes-specific changes include the
 product identity, local project context, a Windows meeting overlay, hosted
 companion surfaces, security hardening, and a separate release/update channel.
 
-Meetnotes is not affiliated with or endorsed by the Meetily maintainers.
+Free Meet Notes is not affiliated with or endorsed by the Meetily maintainers.

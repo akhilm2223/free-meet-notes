@@ -28,25 +28,25 @@ export function About() {
                 <div className="mb-3">
                     <Image
                         src="icon_128x128.png"
-                        alt="Meetnotes logo"
+                        alt="Free Meet Notes logo"
                         width={64}
                         height={64}
                         className="mx-auto"
                     />
                 </div>
-                <h1 className="text-xl font-bold text-gray-900">Meetnotes</h1>
+                <h1 className="text-xl font-bold text-gray-900">Free Meet Notes</h1>
                 <span className="text-sm text-gray-500"> v{currentVersion}</span>
                 <p className="text-medium text-gray-600 mt-1">
                     Real-time notes and summaries that never leave your machine.
                 </p>
                 <p className="mt-3 text-xs text-gray-500">
-                    Development build · automatic updates are disabled until Meetnotes has its own signed release channel.
+                    Development build · automatic updates are disabled until Free Meet Notes has its own signed release channel.
                 </p>
             </div>
 
             {/* Features Grid - Compact */}
             <div className="space-y-3">
-                <h2 className="text-base font-semibold text-gray-800">What makes Meetnotes different</h2>
+                <h2 className="text-base font-semibold text-gray-800">What makes Free Meet Notes different</h2>
                 <div className="grid grid-cols-2 gap-2">
                     <div className="bg-gray-50 rounded p-3 hover:bg-gray-100 transition-colors">
                         <h3 className="font-bold text-sm text-gray-900 mb-1">Privacy-first</h3>
@@ -78,7 +78,7 @@ export function About() {
             <div className="text-center space-y-2">
                 <h3 className="text-medium font-semibold text-gray-800">Open-source foundation</h3>
                 <p className="text-s text-gray-600">
-                    Meetnotes is built on the MIT-licensed Meetily project and preserves its upstream history and attribution.
+                    Free Meet Notes is built on the MIT-licensed Meetily project and preserves its upstream history and attribution.
                 </p>
                 <button
                     onClick={handleContactClick}
@@ -91,7 +91,7 @@ export function About() {
             {/* Footer - Compact */}
             <div className="pt-2 border-t border-gray-200 text-center">
                 <p className="text-xs text-gray-400">
-                    Meetnotes development build · based on Meetily v0.4.0
+                    Free Meet Notes development build · based on Meetily v0.4.0
                 </p>
             </div>
             <AnalyticsConsentSwitch />

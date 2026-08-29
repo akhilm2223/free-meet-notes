@@ -154,6 +154,8 @@ mod tests {
     fn ignores_normal_app_windows() {
         assert!(!title_looks_like_meeting("Zoom Workplace"));
         assert!(!title_looks_like_meeting("Microsoft Teams"));
-        assert!(!title_looks_like_meeting("Meetnotes meeting controls"));
+        assert!(!title_looks_like_meeting(
+            "Free Meet Notes meeting controls"
+        ));
     }
 }

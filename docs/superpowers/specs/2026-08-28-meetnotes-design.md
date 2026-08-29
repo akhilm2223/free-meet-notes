@@ -1,4 +1,4 @@
-# meetnotes — design spec
+# Free Meet Notes — design spec
 
 **Date:** 2026-08-28
 **Status:** draft for review
@@ -110,7 +110,7 @@ meetings(id TEXT PK, started_at, ended_at, project, title, duration_s,
          folder, status)     -- status: recording | transcribing | writing_notes | done | unfiled | failed | discarded
 ```
 
-The index exists so the browser and the tray can list meetings without scanning folders. Files are the source of truth; the index can be rebuilt from `meeting.json` files (`meetnotes reindex`).
+The index exists so the browser and the tray can list meetings without scanning folders. Files are the source of truth; the index can be rebuilt from `meeting.json` files (`free-meet-notes reindex`).
 
 Nothing in this folder is ever deleted by the tool.
 
@@ -311,10 +311,10 @@ Manual tests (Akhil, with a real call — Claude Code never runs the recorder):
 ## 14. Repo layout and dependencies
 
 ```
-meetnotes/
+free_meet_notes/
   README.md  LICENSE (MIT)  pyproject.toml
   .env.example  projects.example.yaml  settings.example.yaml
-  meetnotes/
+  free_meet_notes/
     __main__.py  app.py  config.py  models.py
     tray.py  watcher.py  recorder.py  transcriber.py
     context.py  notes.py  store.py  notify.py
@@ -323,7 +323,7 @@ meetnotes/
   docs/superpowers/specs/   (this file)
 ```
 
-Runtime: Python 3.11 (PyAudioWPatch ships wheels up to 3.11). Packages: `PyAudioWPatch`, `faster-whisper`, `pyannote.audio`, `torch` (CUDA build), `pycaw`, `pywin32`, `pystray`, `Pillow`, `pywebview`, `winotify`, `anthropic`, `pydantic`, `pyyaml`, `python-dotenv`; dev: `pytest`. Run as `python -m meetnotes`; a Startup-folder shortcut is documented in the README (no installer in v1).
+Runtime: Python 3.11 (PyAudioWPatch ships wheels up to 3.11). Packages: `PyAudioWPatch`, `faster-whisper`, `pyannote.audio`, `torch` (CUDA build), `pycaw`, `pywin32`, `pystray`, `Pillow`, `pywebview`, `winotify`, `anthropic`, `pydantic`, `pyyaml`, `python-dotenv`; dev: `pytest`. Run as `python -m free_meet_notes`; a Startup-folder shortcut is documented in the README (no installer in v1).
 
 Setup pain points to document: CUDA-enabled torch install, `HF_TOKEN` + accepting the pyannote model terms on HuggingFace, setting the correct default microphone in Windows Sound settings.
 

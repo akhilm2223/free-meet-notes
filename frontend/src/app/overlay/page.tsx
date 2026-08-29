@@ -105,7 +105,7 @@ export default function MeetingOverlayPage() {
 
   return (
     <main className={styles.viewport}>
-      <section className={styles.overlay} aria-label="Meetnotes recording controls">
+      <section className={styles.overlay} aria-label="Free Meet Notes recording controls">
         <div className={styles.dragArea} data-tauri-drag-region>
           <span
             className={`${styles.statusDot} ${isRecording && !isPaused ? styles.statusDotActive : ''}`}
@@ -126,8 +126,8 @@ export default function MeetingOverlayPage() {
           <button
             className={styles.iconButton}
             type="button"
-            title="Open Meetnotes"
-            aria-label="Open Meetnotes"
+            title="Open Free Meet Notes"
+            aria-label="Open Free Meet Notes"
             onClick={() => runAction('open')}
           >
             <ExternalLink size={16} strokeWidth={2} />

@@ -1,8 +1,8 @@
 {
     "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-    "productName": "Meetnotes",
+    "productName": "Free Meet Notes",
     "version": "0.4.0",
-    "identifier": "com.meetnotes.desktop",
+    "identifier": "com.freemeetnotes.desktop",
     "build": {
         "frontendDist": "../out",
         "devUrl": "http://localhost:3118",
@@ -13,7 +13,7 @@
         "windows": [
             {
                 "label": "main",
-                "title": "Meetnotes",
+                "title": "Free Meet Notes",
                 "width": 1100,
                 "height": 700,
                 "resizable": true,
@@ -23,7 +23,7 @@
             },
             {
                 "label": "meeting-overlay",
-                "title": "Meetnotes meeting controls",
+                "title": "Free Meet Notes meeting controls",
                 "url": "/overlay",
                 "width": 430,
                 "height": 104,
