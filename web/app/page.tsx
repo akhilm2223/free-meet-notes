@@ -31,7 +31,7 @@ export default function HomePage() {
         <div className="navLinks">
           <a href="#how">How it works</a>
           <a href="#privacy">Privacy</a>
-          <a className="navCta" href="https://github.com/Zackriya-Solutions/meetily">Open-source base ↗</a>
+          <a className="navCta" href="https://github.com/akhilm2223/free-meet-notes">View source ↗</a>
         </div>
       </nav>
 

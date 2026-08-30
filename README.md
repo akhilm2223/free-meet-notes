@@ -7,6 +7,13 @@ locally, and is being extended to write project-aware notes.
 > Early development build. The desktop source is functional, but no signed public
 > installer or official update channel exists yet.
 
+## Install
+
+Signed public installation is not available yet. Development builds are produced by
+the `Build Free Meet Notes for Windows` GitHub Actions workflow and include a SHA-256
+checksum. See the [code signing policy](CODE_SIGNING_POLICY.md) before distributing a
+Windows build.
+
 ## What is working
 
 - Local microphone and system-audio recording inherited from Meetily
@@ -51,8 +58,8 @@ corepack pnpm build
 corepack pnpm tauri dev
 ```
 
-The imported upstream build currently provisions FFmpeg as a Tauri sidecar. Its
-download and checksum flow is scheduled for hardening before distributing binaries.
+The imported upstream build provisions FFmpeg as a Tauri sidecar. The archive is
+verified against a pinned SHA-256 digest before extraction.
 
 ## Web companion development
 
@@ -81,3 +88,8 @@ source commit and fork provenance.
 
 The project remains available under the MIT License in [LICENSE.md](LICENSE.md).
 Free Meet Notes is not affiliated with or endorsed by the Meetily maintainers.
+
+## Code signing policy
+
+Windows release signing and provenance rules are documented in
+[CODE_SIGNING_POLICY.md](CODE_SIGNING_POLICY.md).

@@ -15,7 +15,7 @@ export function About() {
 
     const handleContactClick = async () => {
         try {
-            await invoke('open_external_url', { url: 'https://github.com/Zackriya-Solutions/meetily' });
+            await invoke('open_external_url', { url: 'https://github.com/akhilm2223/free-meet-notes' });
         } catch (error) {
             console.error('Failed to open link:', error);
         }
@@ -84,7 +84,7 @@ export function About() {
                     onClick={handleContactClick}
                     className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition-colors duration-200 shadow-sm hover:shadow-md"
                 >
-                    View Meetily upstream
+                    View source on GitHub
                 </button>
             </div>
 

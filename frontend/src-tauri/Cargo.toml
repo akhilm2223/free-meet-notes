@@ -4,7 +4,7 @@ version = "0.4.0"
 description = "A private, local-first meeting recorder and project-aware notes assistant"
 authors = ["Free Meet Notes contributors", "Meetily contributors"]
 license = "MIT"
-repository = "https://github.com/Zackriya-Solutions/meetily"
+repository = "https://github.com/akhilm2223/free-meet-notes"
 edition = "2021"
 rust-version = "1.77"
 
