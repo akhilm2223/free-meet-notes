@@ -59,6 +59,10 @@ jobs:
           New-Item -ItemType Directory -Force -Path "frontend/src-tauri/binaries" | Out-Null
           Copy-Item -LiteralPath "target/release/llama-helper.exe" -Destination "frontend/src-tauri/binaries/llama-helper-x86_64-pc-windows-msvc.exe"
 
+      - name: Test Windows meeting detection
+        shell: pwsh
+        run: cargo test --release --manifest-path frontend/src-tauri/Cargo.toml meeting_detection::tests --lib
+
       - name: Build NSIS installer
         working-directory: frontend
         run: pnpm tauri build --bundles nsis

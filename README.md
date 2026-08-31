@@ -20,7 +20,8 @@ Windows build.
 - Local Whisper and Parakeet transcription options
 - Meeting library, transcript recovery, summaries, and tray controls
 - A compact always-on-top recording pill with start, pause, resume, and stop
-- Local Windows detection heuristics for Zoom, Microsoft Teams, and Google Meet windows
+- Consent-first Windows meeting detection for Zoom, Microsoft Teams, and Google Meet
+- Per-app detection controls under Settings > Preferences
 - A separately deployable blue web companion/landing surface in `web/`
 
 ## Architecture
@@ -78,7 +79,9 @@ browser.
 Free Meet Notes is designed for local processing, but recording laws and workplace
 policies vary. Tell participants when required and obtain consent before recording.
 Window-title meeting detection runs locally, is not persisted, and can be dismissed
-for the current call.
+for the current call. Recording never starts from detection alone. See
+[Meeting detection](docs/MEETING_DETECTION.md) for the matching rules, privacy model,
+limitations, and test matrix.
 
 ## Upstream and license
 

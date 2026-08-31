@@ -1,7 +1,7 @@
 {
     "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
     "productName": "Free Meet Notes",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "identifier": "com.freemeetnotes.desktop",
     "build": {
         "frontendDist": "../out",
@@ -25,11 +25,11 @@
                 "label": "meeting-overlay",
                 "title": "Free Meet Notes meeting controls",
                 "url": "/overlay",
-                "width": 430,
+                "width": 500,
                 "height": 104,
-                "minWidth": 430,
+                "minWidth": 500,
                 "minHeight": 104,
-                "maxWidth": 430,
+                "maxWidth": 500,
                 "maxHeight": 104,
                 "resizable": false,
                 "fullscreen": false,
@@ -38,6 +38,7 @@
                 "skipTaskbar": true,
                 "transparent": true,
                 "shadow": false,
+                "focus": false,
                 "visible": false
             }
         ],

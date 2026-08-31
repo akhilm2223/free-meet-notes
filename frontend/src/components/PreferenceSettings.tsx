@@ -2,10 +2,25 @@
 
 import { useEffect, useState, useRef } from "react"
 import { Switch } from "./ui/switch"
-import { FolderOpen } from "lucide-react"
+import { FolderOpen, Radar } from "lucide-react"
 import { invoke } from "@tauri-apps/api/core"
+import { toast } from "sonner"
 import Analytics from "@/lib/analytics"
 import { useConfig, NotificationSettings } from "@/contexts/ConfigContext"
+
+interface MeetingDetectionSettings {
+  enabled: boolean
+  zoom: boolean
+  teams: boolean
+  googleMeet: boolean
+}
+
+const defaultMeetingDetectionSettings: MeetingDetectionSettings = {
+  enabled: true,
+  zoom: true,
+  teams: true,
+  googleMeet: true,
+}
 
 export function PreferenceSettings() {
   const {
@@ -19,6 +34,8 @@ export function PreferenceSettings() {
   const [notificationsEnabled, setNotificationsEnabled] = useState<boolean | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [previousNotificationsEnabled, setPreviousNotificationsEnabled] = useState<boolean | null>(null);
+  const [meetingDetection, setMeetingDetection] = useState<MeetingDetectionSettings>(defaultMeetingDetectionSettings);
+  const [savingMeetingDetection, setSavingMeetingDetection] = useState(false);
   const hasTrackedViewRef = useRef(false);
 
   // Lazy load preferences on mount (only loads if not already cached)
@@ -72,6 +89,29 @@ export function PreferenceSettings() {
       }
     }
   }, [notificationSettings, isLoadingPreferences, isInitialLoad])
+
+  useEffect(() => {
+    invoke<MeetingDetectionSettings>('get_meeting_detection_settings')
+      .then(setMeetingDetection)
+      .catch((error) => console.error('Failed to load meeting detection settings:', error));
+  }, []);
+
+  const updateMeetingDetection = async (next: MeetingDetectionSettings) => {
+    const previous = meetingDetection;
+    setMeetingDetection(next);
+    setSavingMeetingDetection(true);
+
+    try {
+      await invoke('set_meeting_detection_settings', { settings: next });
+      toast.success('Meeting detection preference saved');
+    } catch (error) {
+      setMeetingDetection(previous);
+      console.error('Failed to save meeting detection settings:', error);
+      toast.error('Failed to save meeting detection preference');
+    } finally {
+      setSavingMeetingDetection(false);
+    }
+  };
 
   useEffect(() => {
     // Skip update on initial load or if value hasn't actually changed
@@ -155,6 +195,50 @@ export function PreferenceSettings() {
             <p className="text-sm text-gray-600">Enable or disable notifications of start and end of meeting</p>
           </div>
           <Switch checked={notificationsEnabledValue} onCheckedChange={setNotificationsEnabled} />
+        </div>
+      </div>
+
+      {/* Meeting Detection Section */}
+      <div className="bg-white rounded-lg border border-blue-200 p-6 shadow-sm">
+        <div className="flex items-start justify-between gap-6">
+          <div className="flex gap-3">
+            <div className="mt-0.5 rounded-xl bg-blue-50 p-2.5 text-blue-600">
+              <Radar className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Meeting detection</h3>
+              <p className="mt-1 text-sm text-gray-600">
+                Show a Start recording prompt when a supported meeting window appears.
+              </p>
+              <p className="mt-2 text-xs font-medium text-blue-700">
+                Detection is local. Recording never starts without your click.
+              </p>
+            </div>
+          </div>
+          <Switch
+            checked={meetingDetection.enabled}
+            disabled={savingMeetingDetection}
+            onCheckedChange={(enabled) => updateMeetingDetection({ ...meetingDetection, enabled })}
+            aria-label="Enable automatic meeting detection"
+          />
+        </div>
+
+        <div className={`mt-5 grid gap-3 sm:grid-cols-3 ${meetingDetection.enabled ? '' : 'opacity-50'}`}>
+          {([
+            ['zoom', 'Zoom'],
+            ['teams', 'Microsoft Teams'],
+            ['googleMeet', 'Google Meet'],
+          ] as const).map(([key, label]) => (
+            <div key={key} className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
+              <span className="text-sm font-medium text-gray-800">{label}</span>
+              <Switch
+                checked={meetingDetection[key]}
+                disabled={!meetingDetection.enabled || savingMeetingDetection}
+                onCheckedChange={(enabled) => updateMeetingDetection({ ...meetingDetection, [key]: enabled })}
+                aria-label={`Detect ${label} meetings`}
+              />
+            </div>
+          ))}
         </div>
       </div>
 

@@ -58,6 +58,11 @@
   animation: breathe 1.8s ease-in-out infinite;
 }
 
+.statusDotDetected {
+  background: #60a5fa;
+  box-shadow: 0 0 0 5px rgba(96, 165, 250, 0.16);
+}
+
 .copy {
   min-width: 0;
 }
@@ -129,12 +134,31 @@
 }
 
 .iconButton,
+.dismissButton,
 .stopButton {
-  width: 36px;
   background: rgba(255, 255, 255, 0.06);
 }
 
+.iconButton,
+.stopButton {
+  width: 36px;
+}
+
 .iconButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dismissButton {
+  gap: 5px;
+  min-width: 82px;
+  padding: 0 11px;
+  color: #cbd5e1 !important;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.dismissButton:hover:not(:disabled) {
+  color: #f8fafc !important;
   background: rgba(255, 255, 255, 0.1);
 }
 

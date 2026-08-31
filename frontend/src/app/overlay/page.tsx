@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
-import { ExternalLink, EyeOff, Pause, Play, Square } from 'lucide-react'
+import { ExternalLink, EyeOff, Pause, Play, Square, X } from 'lucide-react'
 
 import { recordingService, type RecordingState } from '@/services/recordingService'
 
@@ -17,6 +17,11 @@ const idleState: RecordingState = {
 }
 
 type OverlayAction = 'start' | 'pause' | 'resume' | 'stop' | 'open' | 'hide'
+
+interface DetectedMeeting {
+  appId: 'zoom' | 'teams' | 'googleMeet'
+  appName: string
+}
 
 function formatDuration(totalSeconds: number | null) {
   const seconds = Math.max(0, Math.floor(totalSeconds ?? 0))
@@ -38,6 +43,7 @@ function errorMessage(error: unknown) {
 export default function MeetingOverlayPage() {
   const [recordingState, setRecordingState] = useState<RecordingState>(idleState)
   const [meetingName, setMeetingName] = useState<string | null>(null)
+  const [detectedMeeting, setDetectedMeeting] = useState<DetectedMeeting | null>(null)
   const [pendingAction, setPendingAction] = useState<OverlayAction | null>(null)
   const [waitingToStart, setWaitingToStart] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -46,6 +52,7 @@ export default function MeetingOverlayPage() {
     try {
       const nextState = await recordingService.getRecordingState()
       setRecordingState(nextState)
+      setDetectedMeeting(await invoke<DetectedMeeting | null>('get_detected_meeting'))
 
       if (nextState.is_recording) {
         setWaitingToStart(false)
@@ -87,6 +94,7 @@ export default function MeetingOverlayPage() {
   const isRecording = recordingState.is_recording
   const isPaused = recordingState.is_paused
   const isStopping = pendingAction === 'stop'
+  const detectionPrompt = !isRecording && detectedMeeting !== null
   const status = isStopping
     ? 'Saving meeting'
     : waitingToStart && !isRecording
@@ -95,20 +103,29 @@ export default function MeetingOverlayPage() {
         ? 'Recording paused'
         : isRecording
           ? 'Recording locally'
-          : 'Ready when you are'
+          : detectedMeeting
+            ? `${detectedMeeting.appName} detected`
+            : 'Ready when you are'
   const detail = error
     ?? (isRecording
       ? meetingName ?? 'Unfiled meeting'
       : waitingToStart
         ? 'Checking devices and transcription model…'
-        : 'Mic + system audio stay on this computer')
+        : detectedMeeting
+          ? 'Nothing records until you click Start'
+          : 'Mic + system audio stay on this computer')
 
   return (
     <main className={styles.viewport}>
-      <section className={styles.overlay} aria-label="Free Meet Notes recording controls">
+      <section
+        className={styles.overlay}
+        aria-label="Free Meet Notes recording controls"
+        aria-live="polite"
+        role={detectionPrompt ? 'dialog' : undefined}
+      >
         <div className={styles.dragArea} data-tauri-drag-region>
           <span
-            className={`${styles.statusDot} ${isRecording && !isPaused ? styles.statusDotActive : ''}`}
+            className={`${styles.statusDot} ${isRecording && !isPaused ? styles.statusDotActive : ''} ${detectionPrompt ? styles.statusDotDetected : ''}`}
             aria-hidden="true"
           />
           <div className={styles.copy} data-tauri-drag-region>
@@ -141,7 +158,7 @@ export default function MeetingOverlayPage() {
               disabled={pendingAction !== null || waitingToStart}
             >
               <span className={styles.recordGlyph} aria-hidden="true" />
-              Record
+              Start
             </button>
           ) : (
             <>
@@ -169,13 +186,14 @@ export default function MeetingOverlayPage() {
           )}
 
           <button
-            className={styles.iconButton}
+            className={detectionPrompt ? styles.dismissButton : styles.iconButton}
             type="button"
-            title="Hide meeting controls"
-            aria-label="Hide meeting controls"
+            title={detectionPrompt ? 'Not now' : 'Hide meeting controls'}
+            aria-label={detectionPrompt ? 'Not now' : 'Hide meeting controls'}
             onClick={() => runAction('hide')}
           >
-            <EyeOff size={16} />
+            {detectionPrompt ? <X size={15} /> : <EyeOff size={16} />}
+            {detectionPrompt && <span>Not now</span>}
           </button>
         </div>
       </section>
