@@ -548,12 +548,16 @@ pub async fn api_save_model_config<R: Runtime>(
 
     // Skip API key saving for custom-openai provider (it uses customOpenAIConfig JSON instead)
     if let Some(key) = api_key {
-        if !key.is_empty() && provider != "custom-openai" {
+        if !key.trim().is_empty() && provider != "custom-openai" {
             log_info!("🔑 API key provided, saving...");
             if let Err(e) = SettingsRepository::save_api_key(pool, &provider, &key).await {
                 log_error!("❌ Failed to save API key: {}", e);
                 return Err(e.to_string());
             }
+        } else if provider != "custom-openai" {
+            SettingsRepository::delete_api_key(pool, &provider)
+                .await
+                .map_err(|e| e.to_string())?;
         }
     }
 
@@ -667,13 +671,17 @@ pub async fn api_save_transcript_config<R: Runtime>(
     }
 
     if let Some(key) = api_key {
-        if !key.is_empty() {
+        if !key.trim().is_empty() {
             log_info!("API key provided, saving for transcript provider...");
             if let Err(e) = SettingsRepository::save_transcript_api_key(pool, &provider, &key).await
             {
                 log_error!("Failed to save transcript API key: {}", e);
                 return Err(e.to_string());
             }
+        } else {
+            SettingsRepository::delete_transcript_api_key(pool, &provider)
+                .await
+                .map_err(|e| e.to_string())?;
         }
     }
 

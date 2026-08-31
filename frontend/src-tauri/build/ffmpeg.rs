@@ -98,7 +98,7 @@ fn download_and_extract_ffmpeg(
         .map_err(|e| format!("Failed to create HTTP client: {}", e))?;
 
     let response = client
-        .get(&url)
+        .get(url)
         .send()
         .map_err(|e| format!("Failed to download: {}", e))?;
 
@@ -254,8 +254,6 @@ fn extract_zip(
     archive_path: &std::path::Path,
     extract_dir: &std::path::Path,
 ) -> Result<(), String> {
-    use std::io::Read;
-
     let file =
         std::fs::File::open(archive_path).map_err(|e| format!("Failed to open ZIP: {}", e))?;
 

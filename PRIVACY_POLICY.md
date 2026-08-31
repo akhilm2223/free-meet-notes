@@ -1,127 +1,63 @@
-# Meetily Privacy Policy
+# Free Meet Notes privacy policy
 
-*Last updated: [Current Date]*
+Last updated: August 30, 2026
 
-## Our Privacy-First Commitment
+Free Meet Notes is a local-first, open-source Windows desktop application. This
+document describes the current development preview, not planned cloud features.
 
-Meetily is built on the principle that your meeting data should remain private and under your control. This privacy policy explains how we handle data in our open-source meeting assistant.
+## What stays on your computer
 
-## Data Processing Philosophy
+- Audio recordings, transcripts, summaries, settings, and meeting metadata are
+  stored locally in the application's data directories.
+- Local transcription and local summary models process data on your computer.
+- Free Meet Notes has no product analytics, advertising trackers, meeting bot,
+  hosted account, or automatic cloud sync.
+- The public website is a product page. It cannot access data in the desktop app.
 
-### Local-First Processing
-- **Meeting transcription**: Processed entirely on your device using local Whisper models
-- **Audio recordings**: Never transmitted to external servers
-- **Meeting content**: Remains on your infrastructure
-- **AI summaries**: Generated locally or through your chosen LLM provider
+## Optional external AI providers
 
-### Your Data Ownership
-- You own all meeting data, transcripts, and recordings
-- Data is stored locally on your device
-- No vendor lock-in - export your data anytime
-- Complete control over data retention and deletion
+You can choose an external transcription or summary provider. When you do, the
+content required for that request is sent directly from the desktop app to the
+provider or endpoint you selected. Their terms and privacy policy apply. Free
+Meet Notes does not proxy or retain those requests.
 
-## Usage Analytics
+Using local models avoids sending meeting content to an external AI provider.
 
-### What We Collect
-Usage analytics is optional and off by default. When you choose to enable it, Meetily collects minimal, anonymized usage data:
+## API keys
 
-**Application Usage:**
-- Feature usage patterns (which tools you use most)
-- Session duration and frequency
-- Performance metrics (transcription success rates, error frequencies)
-- UI interaction patterns (button clicks, navigation flows)
+Provider API keys entered in the desktop app are stored in the operating
+system's credential store (Windows Credential Manager on Windows). They are not
+stored in the meeting SQLite database, embedded in the installer, committed to
+the source repository, or sent to Free Meet Notes.
 
-**Technical Metrics:**
-- Application version and platform information
-- Error logs and crash reports (anonymized)
-- Performance benchmarks (processing times, resource usage)
+When upgrading from an inherited Meetily build, Free Meet Notes attempts to move
+legacy plaintext provider keys from SQLite into the operating-system credential
+store and then clears the legacy database fields.
 
-### What We DON'T Collect
-We never collect:
-- ❌ Meeting content, transcripts, or recordings
-- ❌ Personal information or identifiable data
-- ❌ File names, meeting titles, or metadata
-- ❌ Audio data or voice patterns
-- ❌ Participant names or contact information
-- ❌ LLM conversations or AI-generated content
+## Security limits
 
-### Why We Collect This Data
-When enabled, analytics helps us with:
-- **Product Quality**: Identifying and fixing bugs that impact user experience
-- **Performance Optimization**: Understanding resource usage and system bottlenecks
-- **Security**: Detecting potential security issues and vulnerabilities
-- **Feature Development**: Making data-driven decisions about new features
-- **Open Source Sustainability**: Ensuring the project meets user needs effectively
+- Meeting files and the SQLite database are not independently encrypted by Free
+  Meet Notes. They rely on your Windows account, file permissions, and any disk
+  encryption you enable, such as BitLocker or Device Encryption.
+- Anyone who can access your unlocked Windows account may be able to access your
+  meetings and use credentials available to that account.
+- No software can promise "no leaks." Please report suspected vulnerabilities
+  privately through the repository's security advisory page rather than a public
+  issue.
 
-### Analytics Implementation
-- **Provider**: PostHog (privacy-focused analytics platform)
-- **Default**: Off by default; analytics starts only after you enable it in settings
-- **Anonymization**: All data linked to generated user IDs only - no personal identification
-- **Data retention**: 12 months maximum, then automatically deleted
-- **Encryption**: All data encrypted in transit using industry-standard protocols
-- **Location**: Data processed in accordance with PostHog's privacy policy
-- **Access Control**: Strictly limited to core development team members
+## Your control
 
-## Third-Party Services
+You can inspect, export, or delete the local files, remove saved credentials
+through Windows Credential Manager, and review or modify the source under its
+license. Deleting the desktop application does not necessarily delete meeting
+files or credentials; remove those separately if you want a complete cleanup.
 
-### LLM Providers (Optional)
-If you choose to use external LLM providers:
-- **Anthropic Claude**: Subject to Anthropic's privacy policy
-- **Groq**: Subject to Groq's privacy policy
-- **Local Ollama**: Processed entirely on your device
+## Open-source transparency
 
-### Analytics Service (Optional)
-- **PostHog**: Used for usage analytics when enabled
-- **Data**: Only anonymized usage patterns, no meeting content
-- **Control**: Completely optional, off by default, and user-controlled
+The current source and issue tracker are at
+<https://github.com/akhilm2223/free-meet-notes>. Material privacy changes will be
+documented in this policy and release notes.
 
-## Your Privacy Rights
-
-### Data Control
-- **Access**: View all data stored locally on your device
-- **Export**: Export your data in standard formats
-- **Delete**: Remove all data from your device
-
-
-### Analytics Transparency
-- **Open source**: Full analytics implementation available for review in our source code
-- **Opt-in**: New and existing installs have analytics disabled until you turn it on
-- **Questions**: Contact us for any analytics-related concerns
-
-## Data Security
-
-### Local Security
-- Data encrypted at rest using your device's security features
-- No transmission of sensitive meeting data
-- Standard file system permissions protect your data
-
-### Open Source Transparency
-- Full source code available for security review
-- Community-audited privacy implementations
-- No hidden data collection or tracking
-
-## Changes to This Policy
-
-We will notify users of any material changes to this privacy policy through:
-- Updates to this document in our GitHub repository
-- Release notes for application updates
-- In-app notifications for significant privacy changes
-
-## Contact Us
-
-For privacy-related questions or concerns:
-- **GitHub Issues**: [Create an issue](https://github.com/Zackriya-Solutions/meeting-minutes/issues)
-- **Email**: [Contact form](https://www.zackriya.com/service-interest-form/)
-- **Community**: [Discord](https://discord.gg/crRymMQBFH)
-
-## Open Source Commitment
-
-As an open-source project under MIT license, you can:
-- Review our complete privacy implementation
-- Modify data handling to meet your requirements
-- Deploy entirely on your own infrastructure
-- Contribute to privacy improvements
-
----
-
-*This privacy policy applies to Meetily v0.0.5 and later versions. For enterprise deployments, additional privacy controls may be available.*
+Free Meet Notes is based on the MIT-licensed Meetily project. Upstream Meetily
+services and maintainers do not operate this fork and are not responsible for
+its data handling.

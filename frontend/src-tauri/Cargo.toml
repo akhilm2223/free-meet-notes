@@ -66,6 +66,7 @@ sha2 = "0.10"         # Verify downloaded FFmpeg archives before extraction
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 anyhow = "1.0"
+keyring = { version = "4.1.6", default-features = true }
 once_cell = "1.17.1"
 uuid = { version = "1.0", features = ["v4", "serde"] }
 posthog-rs = "0.3.7"
