@@ -94,8 +94,8 @@ jobs:
         run: |
           "## Free Meet Notes Windows build" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
           "" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
-          "- Installer: `Free-Meet-Notes-Setup.exe`" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
-          "- SHA-256: `${{ steps.installer.outputs.sha256 }}`" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "- Installer: **Free-Meet-Notes-Setup.exe**" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+          "- SHA-256: **${{ steps.installer.outputs.sha256 }}**" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
           "- Signing: not configured; do not advertise this artifact as a trusted public release yet" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
 
   publish-release:
