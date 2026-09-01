@@ -164,7 +164,7 @@ export default function HomePage() {
 
       <footer className="footer shell">
         <a className="brand" href="#top"><Mark /><span>free meet notes</span></a>
-        <p>Built on the MIT-licensed Meetily project.</p>
+        <p>Private by design. Open source by choice.</p>
         <p>Development preview · 2026</p>
       </footer>
     </main>
