@@ -10,55 +10,56 @@ export function WelcomeStep() {
   const features = [
     {
       icon: Lock,
-      title: 'Your data never leaves your device',
+      title: 'Raw recordings stay on your device',
     },
     {
       icon: Sparkles,
-      title: 'Intelligent summaries & insights',
+      title: 'Use local AI or your own provider',
     },
     {
       icon: Cpu,
-      title: 'Works offline, no cloud required',
+      title: 'Works offline with local models',
     },
   ];
 
   return (
     <OnboardingContainer
       title="Welcome to Free Meet Notes"
-      description="Record. Transcribe. Summarize. All on your device."
+      description="A calmer way to remember every meeting—without sending a bot or your raw audio to a dashboard."
       step={1}
       hideProgress={true}
     >
-      <div className="flex flex-col items-center space-y-10">
-        {/* Divider */}
-        <div className="w-16 h-px bg-gray-300" />
+      <div className="flex min-h-full flex-col items-center justify-center gap-7">
+        <div className="flex h-14 w-14 items-end gap-1.5 rounded-[18px] bg-slate-950 p-3.5 shadow-lg" aria-hidden="true">
+          <span className="h-3 w-2 rounded-full bg-blue-400" />
+          <span className="h-7 w-2 rounded-full bg-blue-500" />
+          <span className="h-5 w-2 rounded-full bg-sky-300" />
+        </div>
 
         {/* Features Card */}
-        <div className="w-full max-w-md bg-white rounded-lg border border-gray-200 shadow-sm p-6 space-y-4">
+        <div className="grid w-full max-w-xl grid-cols-3 gap-3">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <div key={index} className="flex items-start gap-3">
-                <div className="flex-shrink-0 mt-0.5">
-                  <div className="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
-                    <Icon className="w-3 h-3 text-gray-700" />
-                  </div>
+              <div key={index} className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4">
+                <div className="grid h-8 w-8 place-items-center rounded-xl bg-blue-50">
+                  <Icon className="h-3.5 w-3.5 text-blue-600" />
                 </div>
-                <p className="text-sm text-gray-700 leading-relaxed">{feature.title}</p>
+                <p className="mt-4 text-[12px] font-semibold leading-5 text-slate-700">{feature.title}</p>
               </div>
             );
           })}
         </div>
 
         {/* CTA Section */}
-        <div className="w-full max-w-xs space-y-3">
+        <div className="w-full max-w-xs space-y-3 pt-1">
           <Button
             onClick={goNext}
-            className="w-full h-11 bg-gray-900 hover:bg-gray-800 text-white"
+            className="h-11 w-full rounded-xl bg-slate-950 text-[13px] font-bold text-white shadow-sm hover:bg-blue-600"
           >
-            Get Started
+            Set up Free Meet Notes
           </Button>
-          <p className="text-xs text-center text-gray-500">Takes less than 3 minutes</p>
+          <p className="text-center text-[10px] font-medium text-slate-400">About 3 minutes · You stay in control</p>
         </div>
       </div>
     </OnboardingContainer>

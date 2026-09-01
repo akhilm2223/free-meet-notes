@@ -49,16 +49,16 @@ export const EditableTitle: React.FC<EditableTitleProps> = ({
             onFinishEditing();
           }
         }}
-        className="text-2xl font-bold bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded px-3 py-1 w-full resize-none overflow-hidden"
+        className="w-full resize-none overflow-hidden rounded-xl border border-blue-200 bg-blue-50/40 px-3 py-1 text-[24px] font-bold tracking-[-0.035em] text-slate-950 focus:outline-none focus:ring-2 focus:ring-blue-200"
         style={{ minWidth: '300px', minHeight: '40px' }}
         autoFocus
         rows={1}
       />
     </div>
   ) : (
-    <div className="group flex items-center space-x-2 flex-1">
+    <div className="group flex flex-1 items-center gap-2">
       <h1
-        className="text-2xl font-bold cursor-pointer hover:bg-gray-50 rounded px-1 flex-1 whitespace-pre-wrap"
+        className="flex-1 cursor-pointer whitespace-pre-wrap rounded-lg px-1 text-[24px] font-bold tracking-[-0.035em] text-slate-950 transition-colors hover:bg-slate-50"
         onClick={onStartEditing}
       >
         {title}
@@ -66,7 +66,7 @@ export const EditableTitle: React.FC<EditableTitleProps> = ({
       <div className="flex space-x-1">
         <button 
           onClick={onStartEditing}
-          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-gray-100 rounded"
+          className="rounded-lg p-1.5 text-slate-400 opacity-0 transition-opacity duration-200 hover:bg-slate-100 hover:text-slate-700 group-hover:opacity-100"
           title="Edit section title"
         >
           <svg 

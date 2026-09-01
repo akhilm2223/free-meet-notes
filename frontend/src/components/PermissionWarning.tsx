@@ -52,88 +52,52 @@ export function PermissionWarning({
   };
 
   return (
-    <div className="max-w-md mb-4 space-y-3">
-      {/* Combined Permission Warning - Show when either permission is missing */}
+    <div className="mb-1 w-full max-w-[860px]">
       {(!hasMicrophone || !hasSystemAudio) && (
-        <Alert variant="destructive" className="border-amber-400 bg-amber-50">
-          <AlertTriangle className="h-5 w-5 text-amber-600" />
-          <AlertTitle className="text-amber-900 font-semibold">
-            <div className="flex items-center gap-2">
-              {!hasMicrophone && <Mic className="h-4 w-4" />}
-              {!hasSystemAudio && <Speaker className="h-4 w-4" />}
-              {!hasMicrophone && !hasSystemAudio ? 'Permissions Required' : !hasMicrophone ? 'Microphone Permission Required' : 'System Audio Permission Required'}
-            </div>
-          </AlertTitle>
-          {/* Action Buttons */}
-          <div className="mt-4 flex flex-wrap gap-2">
+        <Alert className="flex items-center gap-3 rounded-2xl border-amber-200 bg-amber-50/90 px-4 py-3 text-amber-950 shadow-none">
+          <div className="grid h-9 w-9 flex-shrink-0 place-items-center rounded-xl bg-amber-100">
+            <AlertTriangle className="h-4 w-4 text-amber-700" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <AlertTitle className="text-[12px] font-bold text-amber-950">
+              Audio setup needs attention
+            </AlertTitle>
+            <AlertDescription className="mt-0.5 text-[10px] leading-4 text-amber-800">
+              {!hasMicrophone && !hasSystemAudio
+                ? 'Microphone and system audio are unavailable. Check access before recording.'
+                : !hasMicrophone
+                  ? 'Microphone access is unavailable. Check the connected device and permission.'
+                  : 'System audio is unavailable. Microphone-only recording is still possible.'}
+            </AlertDescription>
+          </div>
+          <div className="flex flex-shrink-0 items-center gap-1.5">
             {isMacOS && !hasMicrophone && (
               <button
                 onClick={openMicrophoneSettings}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 rounded-md transition-colors"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-2.5 text-[10px] font-bold text-amber-900 transition-colors hover:bg-amber-100"
               >
-                <Mic className="h-4 w-4" />
-                Open Microphone Settings
+                <Mic className="h-3.5 w-3.5" />
+                Microphone
               </button>
             )}
             {isMacOS && !hasSystemAudio && (
               <button
                 onClick={openScreenRecordingSettings}
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+                className="inline-flex h-8 items-center gap-1.5 rounded-lg border border-amber-200 bg-white px-2.5 text-[10px] font-bold text-amber-900 transition-colors hover:bg-amber-100"
               >
-                <Speaker className="h-4 w-4" />
-                Open Screen Recording Settings
+                <Speaker className="h-3.5 w-3.5" />
+                System audio
               </button>
             )}
             <button
               onClick={onRecheck}
               disabled={isRechecking}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-amber-900 bg-amber-100 hover:bg-amber-200 rounded-md transition-colors disabled:opacity-50"
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-amber-100 px-2.5 text-[10px] font-bold text-amber-900 transition-colors hover:bg-amber-200 disabled:opacity-50"
             >
-              <RefreshCw className={`h-4 w-4 ${isRechecking ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`h-3.5 w-3.5 ${isRechecking ? 'animate-spin' : ''}`} />
               Recheck
             </button>
           </div>
-          <AlertDescription className="text-amber-800 mt-2">
-            {/* Microphone Warning */}
-            {!hasMicrophone && (
-              <>
-                <p className="mb-3">
-                  Free Meet Notes needs access to your microphone to record meetings. No microphone devices were detected.
-                </p>
-                <div className="space-y-2 text-sm mb-4">
-                  <p className="font-medium">Please check:</p>
-                  <ul className="list-disc list-inside ml-2 space-y-1">
-                    <li>Your microphone is connected and powered on</li>
-                    <li>Microphone permission is granted in System Settings</li>
-                    <li>No other app is exclusively using the microphone</li>
-                  </ul>
-                </div>
-              </>
-            )}
-
-            {/* System Audio Warning */}
-            {!hasSystemAudio && (
-              <>
-                <p className="mb-3">
-                  {hasMicrophone
-                    ? 'System audio capture is not available. You can still record with your microphone, but computer audio won\'t be captured.'
-                    : 'System audio capture is also not available.'}
-                </p>
-                {isMacOS && (
-                  <div className="space-y-2 text-sm mb-4">
-                    <p className="font-medium">To enable system audio on macOS:</p>
-                    <ul className="list-disc list-inside ml-2 space-y-1">
-                      <li>Install a virtual audio device (e.g., BlackHole 2ch)</li>
-                      <li>Grant Screen Recording permission to Free Meet Notes</li>
-                      <li>Configure your audio routing in Audio MIDI Setup</li>
-                    </ul>
-                  </div>
-                )}
-              </>
-            )}
-
-
-          </AlertDescription>
         </Alert>
       )}
     </div>

@@ -62,13 +62,13 @@ export default function HomePage() {
             <div className="recordStatus">
               <span className="liveDot" />
               <div>
-                <strong>Recording locally</strong>
-                <small>Product direction · 18:42</small>
+                <strong>Google Meet detected</strong>
+                <small>Nothing records until you start</small>
               </div>
             </div>
             <div className="pillControls">
-              <button aria-label="Pause preview">Ⅱ</button>
-              <button className="stop" aria-label="Stop preview">■</button>
+              <button className="startPreview" aria-label="Start recording preview"><span /> Start</button>
+              <button aria-label="Dismiss preview">Not now</button>
             </div>
           </div>
 
@@ -83,17 +83,18 @@ export default function HomePage() {
             <div className="appBody">
               <div className="appHeader">
                 <div>
-                  <small>MEETING LIBRARY</small>
-                  <h2>Good afternoon, Akhil.</h2>
+                  <small>NEW MEETING</small>
+                  <h2>Ready for your next conversation.</h2>
                 </div>
-                <button className="newMeeting"><span /> New recording</button>
+                <button className="localBadge">● Audio stays local</button>
               </div>
 
-              <div className="contextStrip">
-                <div className="contextProject"><span>C</span><div><small>ACTIVE PROJECT</small><strong>Compass</strong></div></div>
-                <div><small>LAST MEETING</small><strong>2 days ago</strong></div>
-                <div><small>OPEN ACTIONS</small><strong>6 items</strong></div>
-                <div><small>RECENT CODE</small><strong>12 commits</strong></div>
+              <div className="readyCard">
+                <div className="readyMark"><Mark /></div>
+                <small>READY WHEN YOU ARE</small>
+                <h3>Stay in the meeting.<br />We’ll keep the memory.</h3>
+                <p>Start below, or let the private control appear when your call begins.</p>
+                <div className="readyTrust"><span>Private</span><span>Complete</span><span>Useful</span></div>
               </div>
 
               <div className="meetingList">

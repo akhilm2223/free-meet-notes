@@ -8,6 +8,7 @@ import { ConfidenceIndicator } from "./ConfidenceIndicator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { RecordingStatusBar } from "./RecordingStatusBar";
 import { motion, AnimatePresence } from "framer-motion";
+import { AudioLines, Check, LockKeyhole, MonitorUp } from "lucide-react";
 import { TranscriptSegmentData } from "@/types";
 
 export interface VirtualizedTranscriptViewProps {
@@ -82,11 +83,11 @@ const TranscriptSegment = memo(function TranscriptSegment({
     const displayText = cleanStopWords(text) || (text.trim() === '' ? '[Silence]' : text);
 
     return (
-        <div id={`segment-${id}`} className="mb-3">
-            <div className="flex items-start gap-2">
+        <div id={`segment-${id}`} className="group mb-1 rounded-xl px-3 py-2 transition-colors hover:bg-white">
+            <div className="flex items-start gap-3">
                 <Tooltip>
                     <TooltipTrigger>
-                        <span className="text-xs text-gray-400 mt-1 flex-shrink-0 min-w-[50px]">
+                        <span className="mt-1 min-w-[48px] flex-shrink-0 font-mono text-[10px] text-slate-400">
                             {formatRecordingTime(timestamp)}
                         </span>
                     </TooltipTrigger>
@@ -98,11 +99,11 @@ const TranscriptSegment = memo(function TranscriptSegment({
                 </Tooltip>
                 <div className="flex-1">
                     {isStreaming ? (
-                        <div className="bg-gray-100 border border-gray-200 rounded-lg px-3 py-2">
-                            <p className="text-base text-gray-800 leading-relaxed">{displayText}</p>
+                        <div className="rounded-xl border border-blue-100 bg-blue-50/70 px-3 py-2.5">
+                            <p className="text-[15px] leading-6 text-slate-800">{displayText}</p>
                         </div>
                     ) : (
-                        <p className="text-base text-gray-800 leading-relaxed">{displayText}</p>
+                        <p className="text-[15px] leading-6 text-slate-700">{displayText}</p>
                     )}
                 </div>
             </div>
@@ -224,11 +225,11 @@ export const VirtualizedTranscriptView: React.FC<VirtualizedTranscriptViewProps>
     const useVirtualization = segments.length >= VIRTUALIZATION_THRESHOLD;
 
     return (
-        <div ref={scrollRef} className="flex flex-col h-full overflow-y-auto px-4 py-2">
+        <div ref={scrollRef} className="custom-scrollbar flex h-full flex-col overflow-y-auto px-2 py-2">
             {/* Recording Status Bar - Sticky at top, always visible when recording */}
             <AnimatePresence>
                 {isRecording && (
-                    <div className="sticky top-0 z-10 bg-white pb-2">
+                    <div className="sticky top-0 z-10 bg-[#f6f8fc]/95 pb-3 backdrop-blur-xl">
                         <RecordingStatusBar isPaused={isPaused} />
                     </div>
                 )}
@@ -241,25 +242,56 @@ export const VirtualizedTranscriptView: React.FC<VirtualizedTranscriptViewProps>
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-center text-gray-500 mt-8"
+                    className="flex min-h-[calc(100vh-240px)] items-center justify-center"
                 >
                     {isRecording ? (
-                        <>
-                            <div className="flex items-center justify-center mb-3">
-                                <div className={`w-3 h-3 rounded-full ${isPaused ? 'bg-orange-500' : 'bg-blue-500 animate-pulse'}`}></div>
+                        <div className="fm-card w-full max-w-lg px-10 py-12 text-center">
+                            <div className="mb-5 flex items-center justify-center">
+                                <div className={`grid h-12 w-12 place-items-center rounded-2xl ${isPaused ? 'bg-amber-50 text-amber-600' : 'bg-blue-50 text-blue-600'}`}>
+                                    <AudioLines className="h-5 w-5" />
+                                </div>
                             </div>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-base font-bold text-slate-900">
                                 {isPaused ? 'Recording paused' : 'Listening for speech...'}
                             </p>
-                            <p className="text-xs mt-1 text-gray-400">
+                            <p className="mt-1.5 text-sm text-slate-500">
                                 {isPaused ? 'Click resume to continue recording' : 'Speak to see live transcription'}
                             </p>
-                        </>
+                        </div>
                     ) : (
-                        <>
-                            <p className="text-lg font-semibold">Welcome to Free Meet Notes!</p>
-                            <p className="text-xs mt-1">Start recording to see live transcription</p>
-                        </>
+                        <div className="relative w-full max-w-2xl overflow-hidden rounded-[28px] border border-slate-200/80 bg-white px-10 py-12 text-left shadow-[0_24px_70px_rgba(15,23,42,0.06)]">
+                            <div className="absolute -right-16 -top-20 h-52 w-52 rounded-full bg-blue-100/60 blur-3xl" />
+                            <div className="relative">
+                                <div className="mb-8 flex h-12 w-12 items-end gap-1 rounded-2xl bg-slate-950 p-3" aria-hidden="true">
+                                    <span className="h-2 w-1.5 rounded-full bg-blue-400" />
+                                    <span className="h-6 w-1.5 rounded-full bg-blue-500" />
+                                    <span className="h-4 w-1.5 rounded-full bg-sky-300" />
+                                </div>
+                                <p className="fm-eyebrow">READY FOR YOUR NEXT CONVERSATION</p>
+                                <h2 className="mt-3 max-w-lg text-[32px] font-bold leading-[1.08] tracking-[-0.04em] text-slate-950">
+                                    Stay in the meeting.<br />We’ll keep the memory.
+                                </h2>
+                                <p className="mt-4 max-w-lg text-[14px] leading-6 text-slate-500">
+                                    Start below, or let the private meeting control appear automatically when Zoom, Teams, or Google Meet opens.
+                                </p>
+                                <div className="mt-8 grid grid-cols-3 gap-2.5">
+                                    {[
+                                        [LockKeyhole, 'Private', 'No meeting bot'],
+                                        [MonitorUp, 'Complete', 'Mic + system audio'],
+                                        [Check, 'Useful', 'Notes after you stop'],
+                                    ].map(([Icon, label, detail]) => {
+                                        const FeatureIcon = Icon as typeof LockKeyhole;
+                                        return (
+                                            <div key={String(label)} className="rounded-xl border border-slate-200/80 bg-slate-50/80 p-3.5">
+                                                <FeatureIcon className="h-4 w-4 text-blue-600" />
+                                                <p className="mt-3 text-[11px] font-bold text-slate-800">{String(label)}</p>
+                                                <p className="mt-0.5 text-[10px] text-slate-500">{String(detail)}</p>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
                     )}
                 </motion.div>
             ) : useVirtualization ? (

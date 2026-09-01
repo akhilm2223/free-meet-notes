@@ -38,7 +38,7 @@ export function TranscriptButtonGroup({
   }, [onRefetchTranscripts]);
 
   return (
-    <div className="flex items-center justify-center w-full gap-2">
+    <div className="flex items-center justify-end gap-2">
       <ButtonGroup>
         <Button
           variant="outline"
@@ -49,6 +49,7 @@ export function TranscriptButtonGroup({
           }}
           disabled={transcriptCount === 0}
           title={transcriptCount === 0 ? 'No transcript available' : 'Copy Transcript'}
+          className="h-8 border-slate-200 bg-white px-2.5 text-[11px] text-slate-600 shadow-none hover:bg-slate-50"
         >
           <Copy />
           <span className="hidden lg:inline">Copy</span>
@@ -57,7 +58,7 @@ export function TranscriptButtonGroup({
         <Button
           size="sm"
           variant="outline"
-          className="xl:px-4"
+          className="h-8 border-slate-200 bg-white px-2.5 text-[11px] text-slate-600 shadow-none hover:bg-slate-50 xl:px-3"
           onClick={() => {
             Analytics.trackButtonClick('open_recording_folder', 'meeting_details');
             onOpenMeetingFolder();
@@ -72,7 +73,7 @@ export function TranscriptButtonGroup({
           <Button
             size="sm"
             variant="outline"
-            className="bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border-blue-200 xl:px-4"
+            className="h-8 border-blue-100 bg-blue-50 px-2.5 text-[11px] text-blue-700 shadow-none hover:bg-blue-100 xl:px-3"
             onClick={() => {
               Analytics.trackButtonClick('enhance_transcript', 'meeting_details');
               setShowRetranscribeDialog(true);

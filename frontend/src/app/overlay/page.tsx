@@ -158,7 +158,7 @@ export default function MeetingOverlayPage() {
               disabled={pendingAction !== null || waitingToStart}
             >
               <span className={styles.recordGlyph} aria-hidden="true" />
-              Start
+              Start recording
             </button>
           ) : (
             <>

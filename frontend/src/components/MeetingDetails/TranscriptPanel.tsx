@@ -65,9 +65,15 @@ export function TranscriptPanel({
   }, [transcripts, usePagination, segments]);
 
   return (
-    <div className="hidden md:flex md:w-1/4 lg:w-1/3 min-w-0 border-r border-gray-200 bg-white flex-col relative shrink-0">
+    <aside className="relative hidden min-w-0 shrink-0 flex-col border-r border-slate-200/80 bg-[#f8fafc] md:flex md:w-[36%] md:max-w-[470px]">
       {/* Title area */}
-      <div className="p-4 border-b border-gray-200">
+      <div className="flex min-h-[76px] items-center justify-between gap-3 border-b border-slate-200/80 bg-white/70 px-5 backdrop-blur-xl">
+        <div>
+          <p className="text-[13px] font-bold text-slate-900">Transcript</p>
+          <p className="mt-0.5 text-[10px] text-slate-400">
+            {usePagination ? (totalCount ?? convertedSegments.length) : transcripts.length} moments captured
+          </p>
+        </div>
         <TranscriptButtonGroup
           transcriptCount={usePagination ? (totalCount ?? convertedSegments.length) : (transcripts?.length || 0)}
           onCopyTranscript={onCopyTranscript}
@@ -79,7 +85,7 @@ export function TranscriptPanel({
       </div>
 
       {/* Transcript content - use virtualized view for better performance */}
-      <div className="flex-1 overflow-hidden pb-4">
+      <div className="min-h-0 flex-1 overflow-hidden pb-4 pt-2">
         <VirtualizedTranscriptView
           segments={convertedSegments}
           isRecording={isRecording}
@@ -99,15 +105,19 @@ export function TranscriptPanel({
 
       {/* Custom prompt input at bottom of transcript section */}
       {!isRecording && convertedSegments.length > 0 && (
-        <div className="p-1 border-t border-gray-200">
+        <div className="border-t border-slate-200/80 bg-white/70 p-3">
+          <label className="mb-2 block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400" htmlFor="meeting-context">
+            Context for the summary
+          </label>
           <textarea
-            placeholder="Add context for AI summary. For example people involved, meeting overview, objective etc..."
-            className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm min-h-[80px] resize-y"
+            id="meeting-context"
+            placeholder="Names, goals, jargon, or anything the notes should understand…"
+            className="min-h-[76px] w-full resize-none rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-[12px] leading-5 text-slate-700 shadow-sm placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
             value={customPrompt}
             onChange={(e) => onPromptChange(e.target.value)}
           />
         </div>
       )}
-    </div>
+    </aside>
   );
 }

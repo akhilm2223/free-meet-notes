@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react"
 import { Switch } from "./ui/switch"
-import { FolderOpen, Radar } from "lucide-react"
+import { BellRing, FolderOpen, HardDrive, Radar, ShieldCheck } from "lucide-react"
 import { invoke } from "@tauri-apps/api/core"
 import { toast } from "sonner"
 import Analytics from "@/lib/analytics"
@@ -186,32 +186,47 @@ export function PreferenceSettings() {
   const notificationsEnabledValue = notificationsEnabled ?? false;
 
   return (
-    <div className="space-y-6">
+    <div className="mt-6 grid gap-5">
       {/* Notifications Section */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Notifications</h3>
-            <p className="text-sm text-gray-600">Enable or disable notifications of start and end of meeting</p>
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_12px_32px_-28px_rgba(15,23,42,0.45)]">
+        <div className="flex items-start justify-between gap-6">
+          <div className="flex gap-4">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">
+              <BellRing className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <div>
+              <h3 className="text-[15px] font-bold tracking-[-0.02em] text-slate-950">Recording notifications</h3>
+              <p className="mt-1 max-w-xl text-[13px] leading-5 text-slate-500">
+                Get a quiet system notification when recording starts or stops.
+              </p>
+            </div>
           </div>
-          <Switch checked={notificationsEnabledValue} onCheckedChange={setNotificationsEnabled} />
+          <Switch
+            checked={notificationsEnabledValue}
+            onCheckedChange={setNotificationsEnabled}
+            aria-label="Enable recording notifications"
+          />
         </div>
-      </div>
+      </section>
 
       {/* Meeting Detection Section */}
-      <div className="bg-white rounded-lg border border-blue-200 p-6 shadow-sm">
+      <section className="rounded-2xl border border-blue-200 bg-white p-6 shadow-[0_16px_36px_-30px_rgba(37,99,235,0.5)]">
         <div className="flex items-start justify-between gap-6">
-          <div className="flex gap-3">
-            <div className="mt-0.5 rounded-xl bg-blue-50 p-2.5 text-blue-600">
+          <div className="flex gap-4">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">
               <Radar className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Meeting detection</h3>
-              <p className="mt-1 text-sm text-gray-600">
-                Show a Start recording prompt when a supported meeting window appears.
+              <div className="flex items-center gap-2">
+                <h3 className="text-[15px] font-bold tracking-[-0.02em] text-slate-950">Meeting detection</h3>
+                <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.16em] text-blue-700">Local</span>
+              </div>
+              <p className="mt-1 max-w-xl text-[13px] leading-5 text-slate-500">
+                Show the compact Start recording control when a supported meeting appears.
               </p>
-              <p className="mt-2 text-xs font-medium text-blue-700">
-                Detection is local. Recording never starts without your click.
+              <p className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-blue-700">
+                <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+                Recording never starts without your click.
               </p>
             </div>
           </div>
@@ -223,14 +238,14 @@ export function PreferenceSettings() {
           />
         </div>
 
-        <div className={`mt-5 grid gap-3 sm:grid-cols-3 ${meetingDetection.enabled ? '' : 'opacity-50'}`}>
+        <div className={`mt-6 grid gap-3 sm:grid-cols-3 ${meetingDetection.enabled ? '' : 'opacity-50'}`}>
           {([
             ['zoom', 'Zoom'],
             ['teams', 'Microsoft Teams'],
             ['googleMeet', 'Google Meet'],
           ] as const).map(([key, label]) => (
-            <div key={key} className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-3 py-3">
-              <span className="text-sm font-medium text-gray-800">{label}</span>
+            <div key={key} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 py-3">
+              <span className="text-[12px] font-semibold text-slate-700">{label}</span>
               <Switch
                 checked={meetingDetection[key]}
                 disabled={!meetingDetection.enabled || savingMeetingDetection}
@@ -240,16 +255,21 @@ export function PreferenceSettings() {
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Data Storage Locations Section */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Data Storage Locations</h3>
-        <p className="text-sm text-gray-600 mb-6">
-          View and access where Free Meet Notes stores your data
-        </p>
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_12px_32px_-28px_rgba(15,23,42,0.45)]">
+        <div className="flex gap-4">
+          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-600">
+            <HardDrive className="h-5 w-5" aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="text-[15px] font-bold tracking-[-0.02em] text-slate-950">Local storage</h3>
+            <p className="mt-1 text-[13px] leading-5 text-slate-500">Your recordings and meeting memory stay in a folder you control.</p>
+          </div>
+        </div>
 
-        <div className="space-y-4">
+        <div className="mt-5">
           {/* Database Location */}
           {/* <div className="p-4 border rounded-lg bg-gray-50">
             <div className="font-medium mb-2">Database</div>
@@ -281,14 +301,16 @@ export function PreferenceSettings() {
           </div> */}
 
           {/* Recordings Location */}
-          <div className="p-4 border rounded-lg bg-gray-50">
-            <div className="font-medium mb-2">Meeting Recordings</div>
-            <div className="text-sm text-gray-600 mb-3 break-all font-mono text-xs">
+          <div className="flex items-center justify-between gap-5 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+            <div className="min-w-0">
+              <div className="text-[12px] font-bold text-slate-800">Meeting recordings</div>
+              <div className="mt-1 truncate font-mono text-[10px] text-slate-500">
               {storageLocations?.recordings || 'Loading...'}
+              </div>
             </div>
             <button
               onClick={() => handleOpenFolder('recordings')}
-              className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
+              className="flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-[11px] font-bold text-slate-700 shadow-sm transition-colors hover:border-blue-200 hover:text-blue-700"
             >
               <FolderOpen className="w-4 h-4" />
               Open Folder
@@ -296,17 +318,20 @@ export function PreferenceSettings() {
           </div>
         </div>
 
-        <div className="mt-4 p-3 bg-blue-50 rounded-md">
-          <p className="text-xs text-blue-800">
-            <strong>Note:</strong> Database and models are stored together in your application data directory for unified management.
+        <div className="mt-4 rounded-xl bg-blue-50/80 px-4 py-3">
+          <p className="text-[11px] leading-5 text-blue-800">
+            Database and local AI models stay together in the application data folder for easier backup and management.
           </p>
         </div>
-      </div>
+      </section>
 
-      <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">
-        <h3 className="text-lg font-semibold text-blue-950 mb-2">No usage telemetry</h3>
-        <p className="text-sm text-blue-800">Free Meet Notes does not send product analytics or meeting data to us.</p>
-      </div>
+      <section className="flex items-center gap-3 rounded-2xl border border-blue-200 bg-blue-50/70 px-5 py-4 text-blue-950">
+        <ShieldCheck className="h-5 w-5 shrink-0 text-blue-600" aria-hidden="true" />
+        <div>
+          <h3 className="text-[12px] font-bold">No usage telemetry</h3>
+          <p className="mt-0.5 text-[11px] leading-4 text-blue-800">Free Meet Notes does not send product analytics or meeting data to us.</p>
+        </div>
+      </section>
     </div>
   )
 }
