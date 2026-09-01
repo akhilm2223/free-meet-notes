@@ -6,7 +6,7 @@ const meetings = [
 
 const steps = [
   ['01', 'Meet detected', 'A small native control appears over Zoom, Teams, or Google Meet.'],
-  ['02', 'Record locally', 'Microphone and system audio stay on your Windows machine.'],
+  ['02', 'Record locally', 'Microphone and system audio stay on your Windows or macOS computer.'],
   ['03', 'File with context', 'Notes inherit your project brief, recent decisions, and open actions.'],
 ]
 
@@ -37,7 +37,7 @@ export default function HomePage() {
 
       <section className="hero shell" id="top">
         <div className="heroCopy">
-          <div className="eyebrow"><span /> Windows desktop agent · early build</div>
+          <div className="eyebrow"><span /> Private desktop agent · early build</div>
           <h1>Your meetings.<br /><em>Still yours.</em></h1>
           <p className="lede">
             A private meeting memory that records locally, understands the project behind the call,
@@ -45,7 +45,7 @@ export default function HomePage() {
           </p>
           <div className="heroActions">
             <a className="primaryButton" href="#preview">See the product <span>↓</span></a>
-            <span className="availability">Windows preview in development</span>
+            <span className="availability">Windows preview · macOS signing in progress</span>
           </div>
           <div className="trustRow" aria-label="Product promises">
             <span>No meeting bot</span>
@@ -151,7 +151,7 @@ export default function HomePage() {
             <h2>The recorder lives<br />where the audio lives.</h2>
           </div>
           <div className="architectureFlow" aria-label="Free Meet Notes architecture">
-            <div><small>YOUR WINDOWS PC</small><strong>Capture · Transcribe · Store</strong></div>
+            <div><small>YOUR COMPUTER</small><strong>Capture · Transcribe · Store</strong></div>
             <span className="flowArrow">→</span>
             <div className="optional"><small>OPTIONAL WEB COMPANION</small><strong>Encrypted notes · Team access</strong></div>
           </div>
