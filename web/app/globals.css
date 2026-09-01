@@ -40,8 +40,9 @@ button { font: inherit; }
 .hero h1 em { color: var(--coral); font-weight: 400; }
 .lede { max-width: 520px; margin: 0; color: #555750; font-size: 17px; line-height: 1.65; }
 .heroActions { display: flex; align-items: center; gap: 18px; margin-top: 34px; }
+.ctaGroup { display: flex; align-items: center; gap: 8px; }
 .primaryButton { display: inline-flex; align-items: center; gap: 24px; padding: 14px 18px; color: #fffaf2; background: var(--ink); border-radius: 3px; font-size: 12px; font-weight: 720; }
-.primaryButton span { color: var(--amber); font-size: 16px; }.availability { color: #777970; font-size: 11px; }
+.primaryButton span { color: var(--amber); font-size: 16px; }.secondaryButton { padding: 13px 12px; color: #52566a; border-bottom: 1px solid #aeb5c2; font-size: 11px; font-weight: 700; }.availability { max-width: 150px; color: #777970; font-size: 10px; line-height: 1.45; }
 .trustRow { display: flex; gap: 18px; margin-top: 58px; color: #74766f; font-size: 10px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.08em; }
 .trustRow span + span::before { content: "·"; margin-right: 18px; color: var(--coral); }
 
@@ -84,7 +85,7 @@ button { font: inherit; }
 
 @media (max-width: 680px) {
   .shell { width: min(100% - 28px, 1180px); }.navLinks a:not(.navCta) { display: none; }.navCta { font-size: 0; }.navCta::after { content: "GitHub ↗"; font-size: 11px; }
-  .hero { min-width: 0; min-height: auto; display: block; padding-block: 62px 72px; }.heroCopy { min-width: 0; }.hero h1 { font-size: clamp(58px, 19vw, 82px); }.lede { max-width: 100%; font-size: 16px; }.heroActions { align-items: flex-start; flex-direction: column; }.trustRow { flex-wrap: wrap; gap: 9px; margin-top: 42px; font-size: 8.5px; }.trustRow span { white-space: nowrap; }.trustRow span + span::before { margin-right: 9px; }
+  .hero { min-width: 0; min-height: auto; display: block; padding-block: 62px 72px; }.heroCopy { min-width: 0; }.hero h1 { font-size: clamp(58px, 19vw, 82px); }.lede { max-width: 100%; font-size: 16px; }.heroActions { align-items: flex-start; flex-direction: column; }.availability { max-width: none; }.trustRow { flex-wrap: wrap; gap: 9px; margin-top: 42px; font-size: 8.5px; }.trustRow span { white-space: nowrap; }.trustRow span + span::before { margin-right: 9px; }
   .heroVisual { width: 100%; max-width: 100%; min-width: 0; margin: 100px 0 0; padding-top: 45px; }.recordPill { width: min(430px, calc(100% - 12px)); }.appFrame { width: 100%; min-width: 0; grid-template-columns: 42px minmax(0, 1fr); min-height: 410px; }.appFrame aside { gap: 15px; }.appBody { min-width: 0; padding: 25px 16px; }.appHeader h2 { font-size: 19px; }.localBadge { display: none; }.readyMark { display: none; }.meetingRow { grid-template-columns: 30px 1fr auto; }.projectTag, .meetingStatus { display: none; }
   .principles { padding-block: 80px; }.principlesGrid { grid-template-columns: 1fr 1fr; gap: 28px 20px; }.principlesGrid > .sectionKicker, .principlesGrid > h2, .principlesCopy { grid-column: 1 / -1; }.metric { margin-top: 10px; }.metric:last-child { grid-column: 1 / -1; }
   .how { padding-block: 85px; }.howHeading { grid-template-columns: 1fr; gap: 20px; }.steps { grid-template-columns: 1fr; gap: 46px; margin-top: 62px; }

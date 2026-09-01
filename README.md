@@ -4,20 +4,26 @@ A free, open-source, local-first meeting recorder for Windows. Free Meet Notes
 captures microphone and system audio without adding a bot to the call, transcribes
 locally, and is being extended to write project-aware notes.
 
-> Early development build. The desktop source is functional, but no signed public
-> installer or official update channel exists yet.
+> Early development build. A one-click Windows installer is available, but it is
+> not code signed yet and there is no automatic update channel.
 
 The Windows build is the current product target. The shared recording and
 transcription core includes macOS support, and an Apple Silicon compatibility
 workflow is available for development testing. A normal public Mac download still
 requires Developer ID signing, notarization, and real-device permission testing.
 
-## Install
+## Install on Windows — no terminal required
 
-Signed public installation is not available yet. Development builds are produced by
-the `Build Free Meet Notes for Windows` GitHub Actions workflow and include a SHA-256
-checksum. See the [code signing policy](CODE_SIGNING_POLICY.md) before distributing a
-Windows build.
+1. [Download Free-Meet-Notes-Setup.exe](https://github.com/akhilm2223/free-meet-notes/releases/download/v0.5.0-preview.3/Free-Meet-Notes-Setup.exe).
+2. Open the downloaded file and follow the installer.
+3. Launch **Free Meet Notes** from the Start menu.
+
+The preview installer is not code signed. Windows SmartScreen may warn that the
+publisher is unknown, and Smart App Control in enforcement mode may block it
+entirely. Do not turn off Windows security controls to install this preview. A
+frictionless trusted install requires an RSA code-signing certificate from a trusted
+provider or Microsoft Store distribution. Every release also includes a SHA-256
+checksum; see the [code signing policy](CODE_SIGNING_POLICY.md).
 
 ## What is working
 

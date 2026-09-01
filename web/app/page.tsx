@@ -44,8 +44,11 @@ export default function HomePage() {
             and turns conversation into notes you can actually use.
           </p>
           <div className="heroActions">
-            <a className="primaryButton" href="#preview">See the product <span>↓</span></a>
-            <span className="availability">Windows preview · macOS signing in progress</span>
+            <div className="ctaGroup">
+              <a className="primaryButton" href="https://github.com/akhilm2223/free-meet-notes/releases/download/v0.5.0-preview.3/Free-Meet-Notes-Setup.exe">Download for Windows <span>↓</span></a>
+              <a className="secondaryButton" href="#preview">Preview UI</a>
+            </div>
+            <span className="availability">Unsigned preview · macOS signing in progress</span>
           </div>
           <div className="trustRow" aria-label="Product promises">
             <span>No meeting bot</span>
