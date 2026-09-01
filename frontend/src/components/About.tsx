@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 
 export function About() {
-    const [currentVersion, setCurrentVersion] = useState<string>('0.4.0');
+    const [currentVersion, setCurrentVersion] = useState<string>('0.5.0');
 
     useEffect(() => {
         // Get current version on mount
@@ -77,7 +77,7 @@ export function About() {
             <div className="text-center space-y-2">
                 <h3 className="text-medium font-semibold text-gray-800">Open-source foundation</h3>
                 <p className="text-s text-gray-600">
-                    Free Meet Notes is built on the MIT-licensed Meetily project and preserves its upstream history and attribution.
+                    Free Meet Notes is MIT-licensed. Its source, security policy, and attribution are published in the repository.
                 </p>
                 <button
                     onClick={handleContactClick}
@@ -90,7 +90,7 @@ export function About() {
             {/* Footer - Compact */}
             <div className="pt-2 border-t border-gray-200 text-center">
                 <p className="text-xs text-gray-400">
-                    Free Meet Notes development build · based on Meetily v0.4.0
+                    Free Meet Notes development build · v{currentVersion}
                 </p>
             </div>
         </div>
