@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
     <key>NSMicrophoneUsageDescription</key>
-    <string>This application needs access to your microphone to record meeting audio.</string>
+    <string>Free Meet Notes uses your microphone only after you start a recording.</string>
     <key>NSScreenCaptureUsageDescription</key>
-    <string>This application needs screen recording permission to capture system audio during meetings.</string>
+    <string>Free Meet Notes uses this permission to capture system audio during recordings and detect supported meeting windows. Detection does not store window pixels.</string>
     <key>NSAudioCaptureUsageDescription</key>
-    <string>This application needs permission to capture system audio output for meeting transcription and recording.</string>
+    <string>Free Meet Notes captures system audio only after you start a recording, for local transcription and notes.</string>
     <key>com.apple.security.device.audio-input</key>
     <true/>
 </dict>
