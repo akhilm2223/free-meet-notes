@@ -7,6 +7,11 @@ locally, and is being extended to write project-aware notes.
 > Early development build. The desktop source is functional, but no signed public
 > installer or official update channel exists yet.
 
+The Windows build is the current product target. The shared recording and
+transcription core includes macOS support, and an Apple Silicon compatibility
+workflow is available for development testing. A normal public Mac download still
+requires Developer ID signing, notarization, and Mac-specific meeting detection.
+
 ## Install
 
 Signed public installation is not available yet. Development builds are produced by
