@@ -126,5 +126,6 @@ jobs:
             "dist/Free-Meet-Notes-Setup.exe.sha256" \
             --repo "$GITHUB_REPOSITORY" \
             --title "Free Meet Notes $GITHUB_REF_NAME" \
+            --notes "Unsigned development preview: verify the published SHA-256 checksum. Do not disable Smart App Control, Windows Defender, or organizational security policy to install it. See CODE_SIGNING_POLICY.md for signing status." \
             --generate-notes \
             --prerelease
