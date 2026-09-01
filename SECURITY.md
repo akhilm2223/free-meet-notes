@@ -30,3 +30,14 @@ offer a bug bounty or guaranteed response time.
 - If a real credential is pushed, revoke it immediately and report the exposure
   privately. Removing it in a later commit is not sufficient because Git retains
   history.
+
+## Platform-specific dependency advisories
+
+The repository lockfile includes Tauri's Linux GTK dependency graph so builds
+remain reproducible across platforms. Free Meet Notes currently publishes only
+Windows and macOS builds. The `glib` 0.18 advisory
+(`GHSA-wrw7-89jp-8q8g`) is therefore not present in either shipped target's
+resolved dependency graph. Tauri's current Linux WebKit stack pins the GTK 0.18
+family; forcing `glib` 0.20 independently would create an incompatible GTK
+graph. Re-evaluate this advisory before publishing a Linux build or when Tauri
+moves its Linux stack to GTK 0.20 or newer.
