@@ -10,7 +10,7 @@ locally, and is being extended to write project-aware notes.
 The Windows build is the current product target. The shared recording and
 transcription core includes macOS support, and an Apple Silicon compatibility
 workflow is available for development testing. A normal public Mac download still
-requires Developer ID signing, notarization, and Mac-specific meeting detection.
+requires Developer ID signing, notarization, and real-device permission testing.
 
 ## Install
 
@@ -25,14 +25,14 @@ Windows build.
 - Local Whisper and Parakeet transcription options
 - Meeting library, transcript recovery, summaries, and tray controls
 - A compact always-on-top recording pill with start, pause, resume, and stop
-- Consent-first Windows meeting detection for Zoom, Microsoft Teams, and Google Meet
+- Consent-first Windows and macOS meeting detection for Zoom, Microsoft Teams, and Google Meet
 - Per-app detection controls under Settings > Preferences
 - A separately deployable blue web companion/landing surface in `web/`
 
 ## Architecture
 
 Recording remains a native desktop responsibility. A hosted browser cannot reliably
-capture Windows system audio, run an always-on-top native control, or continue when a
+capture system audio, run an always-on-top native control, or continue when a
 tab closes.
 
 ```text

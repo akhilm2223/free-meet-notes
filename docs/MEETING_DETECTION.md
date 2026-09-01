@@ -1,7 +1,7 @@
 # Meeting detection
 
 Free Meet Notes can show a small always-on-top prompt when a supported meeting
-window appears on Windows. Detection is a convenience signal only: the recorder
+window appears on Windows or macOS. Detection is a convenience signal only: the recorder
 does not start until the user clicks **Start**.
 
 ## Behavior
@@ -26,13 +26,18 @@ to enumerate top-level windows and `IsWindowVisible` to discard hidden windows. 
 then resolves the owner with [`GetWindowThreadProcessId`](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowthreadprocessid)
 and verifies the executable using [`QueryFullProcessImageNameW`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-queryfullprocessimagenamew).
 
+The macOS implementation uses Apple’s
+[`CGWindowListCopyWindowInfo`](https://developer.apple.com/documentation/coregraphics/cgwindowlistcopywindowinfo(_:_:))
+for visible on-screen windows, reads the owning PID, and resolves the process
+executable locally before applying the same title rules.
+
 Current conservative matches are:
 
 | Product | Executable requirement | Title requirement |
 | --- | --- | --- |
-| Zoom | `Zoom.exe` or a supported browser | `Zoom Meeting` or `Zoom Webinar` |
-| Teams | `ms-teams.exe`, `Teams.exe`, or a supported browser | Teams plus `meeting` or `call` |
-| Google Meet | Chrome, Edge, Firefox, Brave, Opera, or Vivaldi | A call title beginning `Meet -`/`Meet –`, a named call ending in `Google Meet`, or a visible `meet.google.com/` path |
+| Zoom | `Zoom.exe`, `zoom.us`, or a supported browser | `Zoom Meeting` or `Zoom Webinar` |
+| Teams | `ms-teams.exe`, `Teams.exe`, `MSTeams`, or a supported browser | Teams plus `meeting` or `call` |
+| Google Meet | Chrome, Edge, Firefox, Brave, Opera, Vivaldi, or Safari on macOS | A call title beginning `Meet -`/`Meet –`, a named call ending in `Google Meet`, or a visible `meet.google.com/` path |
 
 The executable check is important: a text editor mentioning “Google Meet” is not
 enough to trigger the prompt. A browser tab whose entire title is only `Google Meet`
@@ -70,13 +75,15 @@ notifications can be added later as an optional confidence signal, not as a gate
   browser window without inspecting browser internals, which this feature avoids.
 - Calendar reminders are out of scope; this detects an opened meeting surface, not
   a scheduled event.
-- The feature currently targets Windows. Other platforms return no detection.
+- macOS may withhold other apps’ window titles until Screen Recording permission is
+  granted. The app never captures window pixels for detection.
+- Linux currently returns no automatic detection.
 
 ## Release test matrix
 
 - Zoom home window does not prompt; Zoom Meeting does.
 - Teams home/chat does not prompt; Teams meeting/call does.
-- Google Meet in a supported browser prompts; identical text in Notepad does not.
+- Google Meet in a supported browser prompts; identical text in Notepad or TextEdit does not.
 - A one-poll title change does not prompt.
 - **Not now** hides the current prompt.
 - Switching away for less than 60 seconds does not create a second prompt.

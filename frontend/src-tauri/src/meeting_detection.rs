@@ -1,4 +1,4 @@
-//! Consent-first, local meeting-window detection for Windows.
+//! Consent-first, local meeting-window detection for Windows and macOS.
 //!
 //! The detector enumerates visible top-level windows, verifies the owning
 //! executable, and then applies conservative title rules. Window titles are
@@ -288,7 +288,7 @@ fn hide_overlay<R: Runtime>(app: &AppHandle<R>) {
     }
 }
 
-#[cfg(not(target_os = "windows"))]
+#[cfg(not(any(target_os = "windows", target_os = "macos")))]
 fn detect_meeting(_settings: &MeetingDetectionSettings) -> Option<DetectedMeeting> {
     None
 }
@@ -300,6 +300,13 @@ fn detect_meeting(settings: &MeetingDetectionSettings) -> Option<DetectedMeeting
         .find_map(|window| classify_window(&window, settings))
 }
 
+#[cfg(target_os = "macos")]
+fn detect_meeting(settings: &MeetingDetectionSettings) -> Option<DetectedMeeting> {
+    macos::visible_windows()
+        .into_iter()
+        .find_map(|window| classify_window(&window, settings))
+}
+
 fn classify_window(
     window: &WindowInfo,
     settings: &MeetingDetectionSettings,
@@ -307,27 +314,45 @@ fn classify_window(
     let title = window.title.trim().to_ascii_lowercase();
     let process = window.process_name.trim().to_ascii_lowercase();
 
-    if title.is_empty() || process == "free-meet-notes.exe" {
+    if title.is_empty() || matches!(process.as_str(), "free-meet-notes.exe" | "free-meet-notes") {
         return None;
     }
 
     let browser = matches!(
         process.as_str(),
-        "chrome.exe" | "msedge.exe" | "firefox.exe" | "brave.exe" | "opera.exe" | "vivaldi.exe"
+        "chrome.exe"
+            | "msedge.exe"
+            | "firefox.exe"
+            | "brave.exe"
+            | "opera.exe"
+            | "vivaldi.exe"
+            | "google chrome"
+            | "chromium"
+            | "microsoft edge"
+            | "firefox"
+            | "brave browser"
+            | "opera"
+            | "vivaldi"
+            | "safari"
     );
 
     let zoom_title = title.contains("zoom meeting") || title.contains("zoom webinar");
-    if settings.zoom && ((process == "zoom.exe" && zoom_title) || (browser && zoom_title)) {
+    let zoom_app = matches!(
+        process.as_str(),
+        "zoom.exe" | "zoom.us" | "zoom" | "zoom workplace"
+    );
+    if settings.zoom && ((zoom_app && zoom_title) || (browser && zoom_title)) {
         return Some(DetectedMeeting::new("zoom", "Zoom", window.process_id));
     }
 
     let teams_title = title.contains("microsoft teams meeting")
         || ((title.contains("meeting") || title.contains("call"))
             && (title.contains("microsoft teams") || title.contains("| teams")));
-    if settings.teams
-        && ((matches!(process.as_str(), "ms-teams.exe" | "teams.exe") && teams_title)
-            || (browser && teams_title))
-    {
+    let teams_app = matches!(
+        process.as_str(),
+        "ms-teams.exe" | "teams.exe" | "msteams" | "microsoft teams" | "teams"
+    );
+    if settings.teams && ((teams_app && teams_title) || (browser && teams_title)) {
         return Some(DetectedMeeting::new(
             "teams",
             "Microsoft Teams",
@@ -366,6 +391,98 @@ fn title_looks_like_google_meet(title: &str) -> bool {
         || (title.len() > " - google meet".len() && title.ends_with(" - google meet"))
         || (title.len() > " – google meet".len() && title.ends_with(" – google meet"))
         || (title.len() > " — google meet".len() && title.ends_with(" — google meet"))
+}
+
+#[cfg(target_os = "macos")]
+mod macos {
+    use super::{title_may_be_meeting, WindowInfo};
+    use core_foundation::array::CFArray;
+    use core_foundation::base::{CFType, TCFType};
+    use core_foundation::dictionary::CFDictionary;
+    use core_foundation::number::CFNumber;
+    use core_foundation::string::CFString;
+    use core_graphics::window::{
+        kCGNullWindowID, kCGWindowListExcludeDesktopElements, kCGWindowListOptionOnScreenOnly,
+        kCGWindowName, kCGWindowOwnerPID, CGWindowListCopyWindowInfo,
+    };
+    use sysinfo::{Pid, ProcessesToUpdate, System};
+
+    type WindowDictionary = CFDictionary<CFString, CFType>;
+
+    pub(super) fn visible_windows() -> Vec<WindowInfo> {
+        // SAFETY: Core Graphics returns an owned CFArray for the current GUI
+        // session. `wrap_under_create_rule` balances that ownership on drop.
+        let array_ref = unsafe {
+            CGWindowListCopyWindowInfo(
+                kCGWindowListOptionOnScreenOnly | kCGWindowListExcludeDesktopElements,
+                kCGNullWindowID,
+            )
+        };
+        if array_ref.is_null() {
+            return Vec::new();
+        }
+
+        let windows: CFArray<WindowDictionary> =
+            unsafe { TCFType::wrap_under_create_rule(array_ref) };
+        let title_key = unsafe { CFString::wrap_under_get_rule(kCGWindowName) };
+        let process_id_key = unsafe { CFString::wrap_under_get_rule(kCGWindowOwnerPID) };
+
+        let candidates = windows
+            .iter()
+            .filter_map(|window| {
+                let title = string_value(&window, &title_key)?;
+                if !title_may_be_meeting(&title) {
+                    return None;
+                }
+
+                let process_id = number_value(&window, &process_id_key)?;
+                Some((title, process_id))
+            })
+            .collect::<Vec<_>>();
+
+        if candidates.is_empty() {
+            return Vec::new();
+        }
+
+        let process_ids = candidates
+            .iter()
+            .map(|(_, process_id)| Pid::from_u32(*process_id))
+            .collect::<Vec<_>>();
+        let mut system = System::new();
+        system.refresh_processes(ProcessesToUpdate::Some(&process_ids), true);
+
+        candidates
+            .into_iter()
+            .filter_map(|(title, process_id)| {
+                let process_name = system
+                    .process(Pid::from_u32(process_id))?
+                    .name()
+                    .to_string_lossy()
+                    .into_owned();
+
+                Some(WindowInfo {
+                    title,
+                    process_name,
+                    process_id,
+                })
+            })
+            .collect()
+    }
+
+    fn string_value(dictionary: &WindowDictionary, key: &CFString) -> Option<String> {
+        dictionary
+            .find(key)
+            .and_then(|value| value.downcast::<CFString>())
+            .map(|value| value.to_string())
+    }
+
+    fn number_value(dictionary: &WindowDictionary, key: &CFString) -> Option<u32> {
+        dictionary
+            .find(key)
+            .and_then(|value| value.downcast::<CFNumber>())
+            .and_then(|value| value.to_i32())
+            .and_then(|value| u32::try_from(value).ok())
+    }
 }
 
 #[cfg(target_os = "windows")]
@@ -505,6 +622,27 @@ mod tests {
             )
             .map(|meeting| meeting.app_id),
             Some("googleMeet".to_string())
+        );
+        assert_eq!(
+            classify_window(
+                &window("Weekly sync - Zoom Meeting", "zoom.us", 15),
+                &settings,
+            )
+            .map(|meeting| meeting.app_id),
+            Some("zoom".to_string())
+        );
+        assert_eq!(
+            classify_window(&window("Planning - Google Meet", "Safari", 16), &settings,)
+                .map(|meeting| meeting.app_id),
+            Some("googleMeet".to_string())
+        );
+        assert_eq!(
+            classify_window(
+                &window("Design review | Microsoft Teams meeting", "MSTeams", 17),
+                &settings,
+            )
+            .map(|meeting| meeting.app_id),
+            Some("teams".to_string())
         );
         assert!(classify_window(
             &window("Planning - Google Meet", "notepad.exe", 14),
