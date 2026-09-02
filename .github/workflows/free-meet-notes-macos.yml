@@ -56,9 +56,12 @@ jobs:
           mkdir -p frontend/src-tauri/binaries
           cp target/release/llama-helper frontend/src-tauri/binaries/llama-helper-aarch64-apple-darwin
 
-      - name: Test shared meeting-detection rules
+      - name: Test macOS-native safety features
         shell: bash
-        run: cargo test --release --manifest-path frontend/src-tauri/Cargo.toml meeting_detection::tests --lib
+        run: |
+          cargo test --release --manifest-path frontend/src-tauri/Cargo.toml meeting_detection::tests --lib
+          cargo test --release --manifest-path frontend/src-tauri/Cargo.toml study_alerts::tests --lib
+          cargo test --release --manifest-path frontend/src-tauri/Cargo.toml external_url_tests --lib
 
       - name: Build app and DMG
         working-directory: frontend
