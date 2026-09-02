@@ -1,0 +1,11 @@
+# Historical upstream PostHog project identifiers. `phc_` values identify a
+# client-side analytics project and are intentionally public, not credentials.
+# Keep this list fingerprint-specific so future findings still fail CI.
+1abb1eb2f5333d1e35218d45d6bddf59d8bb4e5e:frontend/src-tauri/src/analytics/commands.rs:generic-api-key:12
+1e81fdb384708b7167479bba045d029c0444a434:frontend/src-tauri/src/analytics/commands.rs:generic-api-key:12
+1e81fdb384708b7167479bba045d029c0444a434:frontend/src-tauri/src/lib_old_complex.rs:generic-api-key:1818
+5051c655b4e0b04471ce570ce161f4fa212e868d:frontend/src-tauri/src/analytics/commands.rs:generic-api-key:12
+5051c655b4e0b04471ce570ce161f4fa212e868d:frontend/src-tauri/src/lib_complex_backup.rs:generic-api-key:1818
+5051c655b4e0b04471ce570ce161f4fa212e868d:frontend/src-tauri/src/lib_old_complex.rs:generic-api-key:1818
+f7aee2ce44ff24c99f98495f8b60c2e32072efd6:frontend/src-tauri/src/lib.rs:generic-api-key:1173
+b2599b8a50c6cd93c2dd70d4b131694c08285840:frontend/src-tauri/src/lib.rs:generic-api-key:1174
