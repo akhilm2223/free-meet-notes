@@ -1153,22 +1153,60 @@ pub async fn debug_backend_connection<R: Runtime>(app: AppHandle<R>) -> Result<S
     }
 }
 
+fn validate_external_url(url: &str) -> Result<url::Url, String> {
+    let parsed = url::Url::parse(url).map_err(|_| "Invalid external URL".to_string())?;
+    if !matches!(parsed.scheme(), "https" | "http")
+        || parsed.host_str().is_none()
+        || !parsed.username().is_empty()
+        || parsed.password().is_some()
+    {
+        return Err("Only HTTP(S) URLs without embedded credentials may be opened".to_string());
+    }
+
+    Ok(parsed)
+}
+
 #[tauri::command]
 pub async fn open_external_url(url: String) -> Result<(), String> {
     use std::process::Command;
 
+    let parsed = validate_external_url(&url)?;
+
     let result = if cfg!(target_os = "windows") {
-        Command::new("cmd").args(&["/C", "start", &url]).output()
+        // Do not route untrusted text through cmd.exe. Shell metacharacters in a
+        // URL would otherwise be interpreted as commands on Windows.
+        Command::new("rundll32.exe")
+            .args(["url.dll,FileProtocolHandler", parsed.as_str()])
+            .output()
     } else if cfg!(target_os = "macos") {
-        Command::new("open").arg(&url).output()
+        Command::new("open").arg(parsed.as_str()).output()
     } else {
         // Linux and other Unix-like systems
-        Command::new("xdg-open").arg(&url).output()
+        Command::new("xdg-open").arg(parsed.as_str()).output()
     };
 
     match result {
         Ok(_) => Ok(()),
         Err(e) => Err(format!("Failed to open URL: {}", e)),
+    }
+}
+
+#[cfg(test)]
+mod external_url_tests {
+    use super::validate_external_url;
+
+    #[test]
+    fn accepts_normal_web_links() {
+        assert!(validate_external_url("https://example.com/path?q=one").is_ok());
+        assert!(validate_external_url("http://localhost:11434").is_ok());
+    }
+
+    #[test]
+    fn rejects_shells_files_credentials_and_malformed_links() {
+        assert!(validate_external_url("file:///C:/Windows/System32/calc.exe").is_err());
+        assert!(validate_external_url("javascript:alert(1)").is_err());
+        assert!(validate_external_url("https://user:password@example.com").is_err());
+        assert!(validate_external_url("not a url & calc.exe").is_err());
     }
 }
 
