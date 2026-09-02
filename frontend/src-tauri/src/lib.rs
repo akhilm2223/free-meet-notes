@@ -52,6 +52,7 @@ pub mod meeting_detection;
 pub mod openrouter;
 pub mod parakeet_engine;
 pub mod state;
+pub mod study_alerts;
 pub mod summary;
 pub mod tray;
 pub mod utils;
@@ -569,6 +570,9 @@ pub fn run() {
             meeting_detection::get_meeting_detection_settings,
             meeting_detection::set_meeting_detection_settings,
             meeting_detection::get_detected_meeting,
+            study_alerts::generate_study_alert_topic,
+            study_alerts::get_study_alert_topic,
+            study_alerts::send_study_alert,
             get_transcription_status,
             read_audio_file,
             save_transcript,

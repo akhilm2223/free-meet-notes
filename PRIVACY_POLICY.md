@@ -23,6 +23,23 @@ Meet Notes does not proxy or retain those requests.
 
 Using local models avoids sending meeting content to an external AI provider.
 
+## Optional phone study alerts
+
+Live study-alert detection runs locally against finalized transcript segments and is
+disabled by default. If you separately enable phone delivery, the app publishes a
+short push notification to the third-party `ntfy.sh` service over HTTPS. Raw audio
+and the full transcript are never sent by this feature.
+
+The default **Category only** setting sends generic alert text without transcript
+words. If you choose **Include short excerpt**, up to 360 characters derived from the
+local transcript are sent to `ntfy.sh`; its terms and privacy policy apply. Publish
+requests ask ntfy not to cache messages server-side, which can cause alerts to be
+missed when a phone is offline.
+
+The randomly generated ntfy topic is stored in the operating-system credential
+store. All topics on the public ntfy.sh service are publicly addressable, so treat
+the topic like a password and replace it if it may have been disclosed.
+
 ## API keys
 
 Provider API keys entered in the desktop app are stored in the operating
