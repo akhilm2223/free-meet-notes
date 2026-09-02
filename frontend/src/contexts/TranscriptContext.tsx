@@ -7,6 +7,7 @@ import { useRecordingState } from './RecordingStateContext';
 import { transcriptService } from '@/services/transcriptService';
 import { recordingService } from '@/services/recordingService';
 import { indexedDBService } from '@/services/indexedDBService';
+import { studyAlertService } from '@/lib/study-alerts';
 
 interface TranscriptContextType {
   transcripts: Transcript[];
@@ -94,6 +95,7 @@ export function TranscriptProvider({ children }: { children: ReactNode }) {
         // Listen for recording-started event
         unlistenRecordingStarted = await recordingService.onRecordingStarted(async () => {
           try {
+            studyAlertService.reset();
             // Generate unique meeting ID
             const meetingId = `meeting-${Date.now()}`;
             setCurrentMeetingId(meetingId);
@@ -301,6 +303,23 @@ export function TranscriptProvider({ children }: { children: ReactNode }) {
             console.log('🚫 MAIN LISTENER: Duplicate sequence_id, skipping buffer:', update.sequence_id);
             return;
           }
+
+          // Study-alert classification runs only on finalized local transcript
+          // segments. Phone delivery is separately opt-in and never receives raw audio.
+          void studyAlertService.processTranscript(update).then((result) => {
+            if (!result) return;
+
+            toast(result.candidate.title, {
+              description: result.candidate.excerpt,
+              duration: 8000,
+            });
+
+            if (result.phoneDelivery === 'failed') {
+              toast.error('Phone alert was not delivered', {
+                description: result.deliveryError || 'Check the phone-alert setup and your connection.',
+              });
+            }
+          });
 
           // Create transcript for buffer with NEW timestamp fields
           const newTranscript: Transcript = {

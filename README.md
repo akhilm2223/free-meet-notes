@@ -33,6 +33,8 @@ checksum; see the [code signing policy](CODE_SIGNING_POLICY.md).
 - A compact always-on-top recording pill with start, pause, resume, and stop
 - Consent-first Windows and macOS meeting detection for Zoom, Microsoft Teams, and Google Meet
 - Per-app detection controls under Settings > Preferences
+- Opt-in local study-alert detection for deadlines, assignments, class questions, and key points
+- Optional iPhone/Android push alerts with category-only privacy enabled by default
 - A separately deployable blue web companion/landing surface in `web/`
 
 ## Architecture
@@ -53,6 +55,17 @@ Hosted web companion
 
 Cloud sync is not enabled. The current web companion contains no meeting data and the
 desktop remains the source of truth.
+
+## Live study alerts
+
+During an active recording, finalized transcript segments can be checked locally for
+possible professor requests, deadlines, questions, and important notes. Alerts appear
+inside the desktop app and can optionally be pushed to an iPhone or Android phone
+through the open-source ntfy app. Raw audio is never sent for alert delivery, and the
+default phone mode sends only a generic category rather than transcript text.
+
+This preview is intentionally opt-in and cannot guarantee it will catch every request.
+See [Live study alerts](docs/STUDY_ALERTS.md) for setup, privacy details, and limitations.
 
 ## Desktop development
 

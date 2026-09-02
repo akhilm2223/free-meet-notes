@@ -12,6 +12,7 @@ const SERVICE: &str = "com.freemeetnotes.desktop";
 pub enum SecretScope {
     Summary,
     Transcription,
+    StudyAlerts,
 }
 
 impl SecretScope {
@@ -19,6 +20,7 @@ impl SecretScope {
         match self {
             Self::Summary => "summary",
             Self::Transcription => "transcription",
+            Self::StudyAlerts => "study-alerts",
         }
     }
 }
@@ -83,6 +85,10 @@ mod tests {
         assert_eq!(
             account(SecretScope::Transcription, "openai").unwrap(),
             "transcription:openai"
+        );
+        assert_eq!(
+            account(SecretScope::StudyAlerts, "ntfy-topic").unwrap(),
+            "study-alerts:ntfy-topic"
         );
     }
 
